@@ -82,13 +82,16 @@ class RegisterController extends AbstractLoginController
             'password' => $this->hasher->make(str_random(30)),
             'name_first' => $request->input('name_first'),
             'name_last' => $request->input('name_last'),
-            'root_admin' => false
+            'root_admin' => false,
+            'cr_slots' => 1,
+            'cr_cpu' => 150,
+            'cr_ram' => 1536,
+            'cr_storage' => 5120,
         ];
 
-        $user = User::forceCreate($data);
+        $user = User::create($data);
         $token = $this->passwordBroker->createToken($user);
         $user->notify(new AccountCreated($user, $token ?? null));
-
 
         return new JsonResponse([
             'data' => [
