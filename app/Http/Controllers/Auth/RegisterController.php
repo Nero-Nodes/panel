@@ -89,7 +89,7 @@ class RegisterController extends AbstractLoginController
             'cr_storage' => 5120,
         ];
 
-        $user = User::create($data);
+        $user = User::forceCreate($data);
         $token = $this->passwordBroker->createToken($user);
         $user->notify(new AccountCreated($user, $token ?? null));
 
