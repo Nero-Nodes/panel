@@ -82,6 +82,10 @@ class RegisterController extends AbstractLoginController
             'password' => $this->hasher->make(str_random(30)),
             'name_first' => $request->input('name_first'),
             'name_last' => $request->input('name_last'),
+            // While this seems super insecure, it isn't. The hasher
+            // immediately executes in the request so the database
+            // doesn't even see the unhashed password once. Neat.
+            'password' =>  $this->hasher->make($request->input('password')),
             'root_admin' => false,
             'cr_slots' => 1,
             'cr_cpu' => 150,
@@ -91,7 +95,6 @@ class RegisterController extends AbstractLoginController
 
         $user = User::forceCreate($data);
         $token = $this->passwordBroker->createToken($user);
-        $user->notify(new AccountCreated($user, $token ?? null));
 
         return new JsonResponse([
             'data' => [
