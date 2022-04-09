@@ -2,16 +2,15 @@
 
 namespace Pterodactyl\Http\Controllers\Auth;
 
-use Pterodactyl\Http\Requests\Auth\RegisterRequest;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Http\Request;
+use Pterodactyl\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Contracts\View\View;
-use Illuminate\Contracts\View\Factory as ViewFactory;
-use Pterodactyl\Models\User;
-use Illuminate\Contracts\Auth\PasswordBroker;
 use Illuminate\Contracts\Hashing\Hasher;
 use Pterodactyl\Notifications\AccountCreated;
+use Pterodactyl\Http\Requests\Auth\RegisterRequest;
+use Illuminate\Contracts\View\Factory as ViewFactory;
 
 class RegisterController extends AbstractLoginController
 {
@@ -19,11 +18,6 @@ class RegisterController extends AbstractLoginController
      * @var \Illuminate\Contracts\View\Factory
      */
     private $view;
-
-    /**
-     * @var \Illuminate\Contracts\Auth\PasswordBroker
-     */
-    private $passwordBroker;
 
     /**
      * @var \Illuminate\Contracts\Hashing\Hasher
@@ -39,16 +33,13 @@ class RegisterController extends AbstractLoginController
      * LoginController constructor.
      *
      * @param \Illuminate\Contracts\View\Factory $view
-     * @param PasswordBroker $passwordBroker
      * @param Hasher $hasher
      */
     public function __construct(
         ViewFactory $view,
-        PasswordBroker $passwordBroker,
         Hasher $hasher
     ) {
         $this->view = $view;
-        $this->passwordBroker = $passwordBroker;
         $this->hasher = $hasher;
     }
 
@@ -79,9 +70,6 @@ class RegisterController extends AbstractLoginController
             'uuid' => Uuid::uuid4()->toString(),
             'username' => $request->input('username'),
             'email' => $request->input('email'),
-            // While this seems super insecure, it isn't. The hasher
-            // immediately executes in the request so the database
-            // doesn't even see the unhashed password once. Neat.
             'password' => $this->hasher->make($request->input('password')),
             'name_first' => $request->input('name_first'),
             'name_last' => $request->input('name_last'),
@@ -93,7 +81,6 @@ class RegisterController extends AbstractLoginController
         ];
 
         $user = User::forceCreate($data);
-        $token = $this->passwordBroker->createToken($user);
 
         return new JsonResponse([
             'data' => [
