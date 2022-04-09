@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Pterodactyl\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Contracts\View\View;
+use Pterodactyl\Models\Notification;
 use Illuminate\Contracts\Hashing\Hasher;
 use Pterodactyl\Notifications\AccountCreated;
 use Pterodactyl\Http\Requests\Auth\RegisterRequest;
@@ -81,6 +82,12 @@ class RegisterController extends AbstractLoginController
         ];
 
         $user = User::forceCreate($data);
+
+        Notification::create([
+            'user_id' => $user->id,
+            'action' => Notification::ACCOUNT__CREATE,
+            'created' => date('d.m.Y H:i:s'),
+        ]);
 
         return new JsonResponse([
             'data' => [
