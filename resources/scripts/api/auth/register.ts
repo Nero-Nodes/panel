@@ -11,16 +11,18 @@ export interface RegisterData {
     email: string;
     NameFirst: string;
     NameLast: string;
+    password: string;
     recaptchaData?: string | null;
 }
 
-export default ({ username, email, NameFirst, NameLast, recaptchaData }: RegisterData): Promise<RegisterResponse> => {
+export default ({ username, email, NameFirst, NameLast, password, recaptchaData }: RegisterData): Promise<RegisterResponse> => {
     return new Promise((resolve, reject) => {
         http.post('/auth/register', {
             username: username,
             email: email,
             name_first: NameFirst,
             name_last: NameLast,
+            password: password,
             'g-recaptcha-response': recaptchaData,
         })
             .then(response => {

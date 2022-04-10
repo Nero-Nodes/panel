@@ -16,6 +16,7 @@ interface Values {
     email: string;
     NameFirst: string;
     NameLast: string;
+    password: string;
 }
 
 const RegisterContainer = ({ history }: RouteComponentProps) => {
@@ -49,12 +50,12 @@ const RegisterContainer = ({ history }: RouteComponentProps) => {
             .then(response => {
                 if (response.complete) {
                     // @ts-ignore
-                    alert('Your account has been registered on the Panel.\nCheck your email for login instructions.');
-                    history.replace('/auth/login/');
+                    alert('Your account has been registered on the Panel.');
+                    history.replace('/auth/login');
                     return;
                 }
 
-                history.replace('/auth/register/');
+                history.replace('/auth/register');
             })
             .catch(error => {
                 console.error(error);
@@ -70,12 +71,13 @@ const RegisterContainer = ({ history }: RouteComponentProps) => {
     return (
         <Formik
             onSubmit={onSubmit}
-            initialValues={{ username: '', email: '', NameFirst: '', NameLast: '' }}
+            initialValues={{ username: '', email: '', NameFirst: '', NameLast: '', password: '' }}
             validationSchema={object().shape({
                 username: string().required('A username must be provided.'),
                 email: string().required('An email address must be provided.'),
                 NameFirst: string().required('A first name must be provided.'),
                 NameLast: string().required('A last name must be provided.'),
+                password: string().min(8).required('A password must be provided.'),
             })}
         >
             {({ isSubmitting, setSubmitting, submitForm }) => (
@@ -110,6 +112,14 @@ const RegisterContainer = ({ history }: RouteComponentProps) => {
                             type={'text'}
                             label={'Last Name'}
                             name={'NameLast'}
+                            disabled={isSubmitting}
+                        />
+                    </div>
+                    <div css={tw`mt-6`}>
+                        <Field
+                            type={'password'}
+                            label={'Password'}
+                            name={'password'}
                             disabled={isSubmitting}
                         />
                     </div>

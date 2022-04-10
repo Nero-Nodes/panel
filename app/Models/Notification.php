@@ -24,6 +24,8 @@ class Notification extends Model
 {
     public const RESOURCE_NAME = 'notification';
 
+    public const ACCOUNT__CREATE = 'Account has been created.';
+
     public const ACCOUNT__EMAIL_UPDATE = 'Email has been updated.';
     public const ACCOUNT__PASSWORD_UPDATE = 'Password has been updated.';
     public const ACCOUNT__USERNAME_UPDATE = 'Username has been updated.';
