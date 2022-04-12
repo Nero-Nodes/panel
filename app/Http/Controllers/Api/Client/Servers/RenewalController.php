@@ -8,7 +8,6 @@ use Pterodactyl\Models\Server;
 use Illuminate\Support\Facades\DB;
 use Pterodactyl\Exceptions\DisplayException;
 use Illuminate\Validation\ValidationException;
-use Pterodactyl\Http\Requests\Api\Client\Servers\RenewalRequest;
 use Pterodactyl\Http\Controllers\Api\Client\ClientApiController;
 
 class RenewalController extends ClientApiController
@@ -27,12 +26,13 @@ class RenewalController extends ClientApiController
      * @throws Throwable
      * @throws ValidationException
      */
-    public function index(Request $request, Server $server)
+    public function renew(Request $request, Server $server)
     {
         if ($request->user()->cr_balance < 25) {
             throw new DisplayException('You do not have enough coins to renew this server.');
         }
 
+        // Also not working
         /*
             $balance = DB::table('users')->select('cr_balance')->where('id', '=', $id)->get();
 
@@ -43,7 +43,7 @@ class RenewalController extends ClientApiController
 
         try {
             // Not working
-            DB::table('servers')->where('id', $server->id)->update([
+            Server::where('id', $server->id)->update([
                 'renewal' => $server->renewal + 7,
             ]);
         } catch (DisplayException $e) {
