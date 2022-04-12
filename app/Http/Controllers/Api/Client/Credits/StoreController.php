@@ -78,6 +78,8 @@ class StoreController extends ClientApiController
             'image' => 'quay.io/chirag350/multi-egg',
             'startup' => $egg->startup,
             'start_on_completion' => true,
+            'renewal' => 7,
+            'renewable' => true,
         ];
 
         foreach (DB::table('egg_variables')->where('egg_id', '=', $egg->id)->get() as $var) {

@@ -30,5 +30,8 @@ class Kernel extends ConsoleKernel
 
         // Every day cleanup any internal backups of service files.
         $schedule->command('p:maintenance:clean-service-backups')->daily();
+
+        // Every day, take away one day until a server needs to renew.
+        $schedule->command('p:schedule:renewal')->daily();
     }
 }
