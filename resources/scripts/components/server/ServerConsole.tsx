@@ -11,11 +11,11 @@ import { EulaModalFeature, JavaVersionModalFeature, GSLTokenModalFeature, PIDLim
 import ErrorBoundary from '@/components/elements/ErrorBoundary';
 import Spinner from '@/components/elements/Spinner';
 import StatBars from './StatBars';
+import RenewBlock from './RenewBlock';
 
 export type PowerAction = 'start' | 'stop' | 'restart' | 'kill';
 
 const ChunkedConsole = lazy(() => import(/* webpackChunkName: "console" */'@/components/server/Console'));
-const ChunkedStatGraphs = lazy(() => import(/* webpackChunkName: "graphs" */'@/components/server/StatGraphs'));
 
 const ServerConsole = () => {
     const isInstalling = ServerContext.useStoreState(state => state.server.data!.isInstalling);
@@ -68,7 +68,7 @@ const ServerConsole = () => {
                     <ServerDetailsBlock/>
                 </Spinner.Suspense>
                 <Spinner.Suspense>
-                    <ChunkedStatGraphs/>
+                    <RenewBlock/>
                 </Spinner.Suspense>
                 <React.Suspense fallback={null}>
                     {eggFeatures.includes('eula') && <EulaModalFeature/>}

@@ -131,5 +131,21 @@ class StoreController extends ClientApiController
         return $allocation->id;
     }
 
+    /**
+     * @throws DisplayException
+     * @throws Throwable
+     * @throws ValidationException
+     */
+    public function renewServer(StoreRequest $request, Server $server)
+    {
+        if ($request->user()->cr_balance < 25) {
+            throw new DisplayException('You do not have enough coins to renew this server.');
+        }
 
+        try {
+            $server->renew($request);
+        } catch (DisplayException $e) {
+            throw new DisplayException('There was an error while renewing your server. Please contact support.');
+        }
+    }
 }

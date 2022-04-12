@@ -144,6 +144,7 @@ Route::group(['prefix' => '/servers/{server}', 'middleware' => [AuthenticateServ
 Route::group(['prefix' => '/store'], function () {
     Route::get('/config', 'Credits\StoreController@getConfig');
     Route::post('/create', 'Credits\StoreController@newServer');
+    Route::post('/renew/{server}', 'Servers\RenewalController@index');
     Route::post('/checkout', 'Credits\PaymentController@purchase')->name('api.client.store.checkout');
     Route::group(['prefix' => '/buy'], function () {
         Route::post('/slots', 'Credits\PurchaseController@buySlots');
