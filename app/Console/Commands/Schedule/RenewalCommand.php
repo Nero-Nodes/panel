@@ -42,7 +42,6 @@ class ProcessRunnableCommand extends Command
     {
         $servers = Server::query()
             ->where('renewable', true)
-            ->where('renewal', '>', 0)
             ->get();
 
         if ($servers->count() < 1) {
@@ -67,20 +66,18 @@ class ProcessRunnableCommand extends Command
      * Takes one day off of the time a server has until it needs to be
      * renewed.
      */
-    protected function process()
-    // DEVNOTE: $s->renewal appearing as 0 - needs fixing
+    protected function process(Server $server)
     {
-        $servers = Server::where('renewable', true)->get();
+        $servers = $server->where('renewable', true)->get();
 
         foreach ($servers as $s) {
             if ($s->renewal = 0 || $s->renewal < 0) {
-                // Currently not working, need to look into this
                 $this->suspensionService->toggle($s, 'suspend');
             }
         }
 
         foreach ($servers as $s) {
-            Server::update(['renewal' => $s->renewal -1]);
+            $server->update(['renewal' => $s->renewal -1]);
         }
     }
 }
