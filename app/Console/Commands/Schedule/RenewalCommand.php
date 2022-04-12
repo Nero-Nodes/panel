@@ -6,11 +6,15 @@ use Exception;
 use Throwable;
 use Pterodactyl\Models\Server;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 use Pterodactyl\Services\Servers\SuspensionService;
 
 class ProcessRunnableCommand extends Command
 {
+    /**
+     * @var \Pterodactyl\Services\Servers\ServerDeletionService
+     */
+    protected $deletionService;
+
     /**
      * @var string
      */
@@ -20,6 +24,16 @@ class ProcessRunnableCommand extends Command
      * @var string
      */
     protected $description = 'Process renewals for servers.';
+
+    /**
+     * DeleteUserCommand constructor.
+     */
+    public function __construct(SuspensionService $suspensionService)
+    {
+        parent::__construct();
+
+        $this->suspensionService = $suspensionService;
+    }
 
     /**
      * Handle command execution.
@@ -54,20 +68,19 @@ class ProcessRunnableCommand extends Command
      * renewed.
      */
     protected function process()
+    // DEVNOTE: $s->renewal appearing as 0 - needs fixing
     {
         $servers = Server::where('renewable', true)->get();
 
         foreach ($servers as $s) {
-            if ($s->renewal = 0) {
+            if ($s->renewal = 0 || $s->renewal < 0) {
                 // Currently not working, need to look into this
-                SuspensionService::toggle($s, 'suspend');
+                $this->suspensionService->toggle($s, 'suspend');
             }
         }
 
         foreach ($servers as $s) {
-            DB::table('servers')->where('renewable', true)->update([
-                'renewal' => $s->renewal - 1,
-            ]);
+            Server::update(['renewal' => $s->renewal -1]);
         }
     }
 }
