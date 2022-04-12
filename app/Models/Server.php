@@ -51,7 +51,10 @@ use Pterodactyl\Exceptions\Http\Server\ServerStateConflictException;
  * @property \Pterodactyl\Models\Backup[]|\Illuminate\Database\Eloquent\Collection $backups
  * @property \Pterodactyl\Models\Mount[]|\Illuminate\Database\Eloquent\Collection $mounts
  * @property \Pterodactyl\Models\AuditLog[] $audits
+ * @property int|null $renewal
+ * @property boolean|null $renwable
  */
+
 class Server extends Model
 {
     use BelongsToThrough;

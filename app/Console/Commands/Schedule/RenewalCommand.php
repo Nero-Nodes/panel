@@ -4,10 +4,10 @@ namespace Pterodactyl\Console\Commands\Schedule;
 
 use Exception;
 use Throwable;
-use Illuminate\Console\Command;
 use Pterodactyl\Models\Server;
-use Illuminate\Support\Facades\Log;
-use Pterodactyl\Services\Schedules\ProcessScheduleService;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
+use Pterodactyl\Services\Servers\SuspensionService;
 
 class ProcessRunnableCommand extends Command
 {
@@ -34,9 +34,11 @@ class ProcessRunnableCommand extends Command
         if ($servers->count() < 1) {
             $this->line('There are no scheduled tasks for servers that need to be run.');
             return;
+        } else {
+            $this->line('Processing renewals for '.$servers->count().' servers.');
         }
 
-        $bar = $this->output->createProgressBar(count($serevrs));
+        $bar = $this->output->createProgressBar(count($servers));
         foreach ($servers as $s) {
             $bar->clear();
             $this->process($s);
@@ -51,11 +53,20 @@ class ProcessRunnableCommand extends Command
      * Takes one day off of the time a server has until it needs to be
      * renewed.
      */
-    protected function process(Server $server)
+    protected function process()
     {
-        foreach ($server as $s) {
-            DB::table('servers')->where('id', '=', $s->id)->update([
-                'renewal' => $s->renewal -1,
+        $servers = Server::where('renewable', true)->get();
+
+        foreach ($servers as $s) {
+            if ($s->renewal = 0) {
+                // Currently not working, need to look into this
+                SuspensionService::toggle($s, 'suspend');
+            }
+        }
+
+        foreach ($servers as $s) {
+            DB::table('servers')->where('renewable', true)->update([
+                'renewal' => $s->renewal - 1,
             ]);
         }
     }

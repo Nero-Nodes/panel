@@ -230,6 +230,7 @@ class ServerCreationService
             'allocation_limit' => Arr::get($data, 'allocation_limit') ?? 0,
             'backup_limit' => Arr::get($data, 'backup_limit') ?? 0,
             'renewal' => Arr::get($data, 'renewal') ?? 0,
+            'renewable' => Arr::get($data, 'renewable') ?? false,
         ]);
 
         return $model;
