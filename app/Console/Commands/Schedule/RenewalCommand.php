@@ -68,11 +68,11 @@ class ProcessRunnableCommand extends Command
     {
         $servers = $server->where('renewable', true)->get();
 
-
         // Testing area
         foreach ($servers as $s) {
-            echo($s); // Works
-            echo($s->id); // Doesn't work
+            var_dump($s->renewal);
+            // echo($s); // Works, lists all data on server.
+            echo($s->renewal); // Doesn't work, returns nothing.
         }
 
         foreach ($servers as $s) {
