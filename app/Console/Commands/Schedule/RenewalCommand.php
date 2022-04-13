@@ -7,6 +7,7 @@ use Throwable;
 use Pterodactyl\Models\Server;
 use Illuminate\Console\Command;
 use Pterodactyl\Services\Servers\SuspensionService;
+use Pterodactyl\Services\Servers\ServerDeletionService;
 
 class ProcessRunnableCommand extends Command
 {
@@ -14,6 +15,11 @@ class ProcessRunnableCommand extends Command
      * @var \Pterodactyl\Services\Servers\SuspensionService
      */
     protected $suspensionService;
+
+    /**
+     * @var \Pterodactyl\Services\Servers\ServerDeletionService
+     */
+    protected $deletionService;
 
     /**
      * @var string
@@ -28,11 +34,12 @@ class ProcessRunnableCommand extends Command
     /**
      * DeleteUserCommand constructor.
      */
-    public function __construct(SuspensionService $suspensionService)
+    public function __construct(SuspensionService $suspensionService, ServerDeletionService $deletionService)
     {
         parent::__construct();
 
         $this->suspensionService = $suspensionService;
+        $this->deletionService = $deletionService;
     }
 
     /**
@@ -76,6 +83,9 @@ class ProcessRunnableCommand extends Command
 
 
         foreach ($servers as $s) {
+            if ($s->renewal == -7 || $s->renewal < -7) {
+                $this->deletionService->handle($s);
+            }
             if ($s->renewal == 0 || $s->renewal < 0) {
                 $this->suspensionService->toggle($s, 'suspend');
             }
