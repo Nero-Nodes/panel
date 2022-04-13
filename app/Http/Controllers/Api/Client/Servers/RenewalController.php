@@ -3,6 +3,7 @@
 namespace Pterodactyl\Http\Controllers\Api\Client\Servers;
 
 use Throwable;
+use Pterodactyl\Models\User;
 use Illuminate\Http\Request;
 use Pterodactyl\Models\Server;
 use Illuminate\Support\Facades\DB;
@@ -32,22 +33,24 @@ class RenewalController extends ClientApiController
             throw new DisplayException('You do not have enough coins to renew this server.');
         }
 
-        // Also not working
-        /*
-            $balance = DB::table('users')->select('cr_balance')->where('id', '=', $id)->get();
-
-            DB::table('users')->where('id', '=', $id)->update([
-                'cr_balance' => $balance - 25,
-            ]);
-        */
-
         try {
             // Not working
-            Server::where('id', $server->id)->update([
-                'renewal' => $server->renewal + 7,
+            Server::where('uuid', $request['uuid'])->update([
+                'renewal' => $request['current'] + 7,
             ]);
         } catch (DisplayException $e) {
             throw new DisplayException('There was an error while renewing your server. Please contact support.');
+        }
+
+        try {
+            $user = $request->user()->id;
+            $balance = User::select('cr_balance')->where('id', $user)->get();
+
+            User::where('id', $user)->update([
+                'cr_balance' => $request->user()->cr_balance - 25,
+            ]);
+        } catch (DisplayException $e) {
+            throw new DisplayException('There was an error while removing coins from your account.');
         }
     }
 }

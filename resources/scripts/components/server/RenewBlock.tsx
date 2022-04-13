@@ -12,13 +12,17 @@ const RenewBlock = () => {
     const { addFlash, clearFlashes, clearAndAddHttpError } = useFlash();
     const [ isSubmit, setSubmit ] = useState(false);
 
-    const uuid = ServerContext.useStoreState(state => state.server.data!.name);
+    const uuid = ServerContext.useStoreState(state => state.server.data!.uuid);
+    const current = ServerContext.useStoreState(state => state.server.data!.renewal);
 
     const submit = () => {
         clearFlashes('server:renewal');
         setSubmit(true);
 
-        renewServer(uuid)
+        console.log('Current renewal: ' + current);
+        console.log('UUID: ' + uuid);
+
+        renewServer(uuid, current)
             .then(() => setSubmit(false))
             .then(() => addFlash({
                 type: 'success',
