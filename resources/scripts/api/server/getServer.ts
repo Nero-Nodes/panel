@@ -43,7 +43,7 @@ export interface Server {
     isTransferring: boolean;
     variables: ServerEggVariable[];
     allocations: Allocation[];
-    renewal: number | null;
+    renewal: number;
     renewable: boolean | null;
 }
 
