@@ -68,23 +68,17 @@ class ProcessRunnableCommand extends Command
     {
         $servers = $server->where('renewable', true)->get();
 
-        // Testing area
-        foreach ($servers as $s) {
-            var_dump($s->renewal);
-            // echo($s); // Works, lists all data on server.
-            echo($s->renewal); // Doesn't work, returns nothing.
-        }
-
-        foreach ($servers as $s) {
-            if ($s->renewal = 0 || $s->renewal < 0) {
-                $this->suspensionService->toggle($s, 'suspend');
-            }
-        }
-
         foreach ($servers as $s) {
             // $s->renewal is being read as 0 here.
             // Needs fixing!!
             $server->update(['renewal' => $s->renewal -1]);
+        }
+
+
+        foreach ($servers as $s) {
+            if ($s->renewal == 0 || $s->renewal < 0) {
+                $this->suspensionService->toggle($s, 'suspend');
+            }
         }
     }
 }
