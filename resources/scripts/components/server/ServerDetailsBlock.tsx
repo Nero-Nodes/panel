@@ -78,7 +78,6 @@ const ServerDetailsBlock = () => {
     )).toString();
 
     const renewal = ServerContext.useStoreState(state => state.server.data?.renewal);
-    const renewable = ServerContext.useStoreState(state => state.server.data?.renewable);
 
     const diskLimit = limits.disk ? megabytesToHuman(limits.disk) : 'Unlimited';
     const memoryLimit = limits.memory ? megabytesToHuman(limits.memory) : 'Unlimited';
@@ -125,14 +124,6 @@ const ServerDetailsBlock = () => {
             </p>
             <p css={tw`text-xs mt-2`}>
                 <FontAwesomeIcon icon={faCoins} fixedWidth css={tw`mr-1`}/> {renewal} days until renewal
-            </p>
-            <p css={tw`text-xs mt-2`}>
-                <FontAwesomeIcon icon={faCoins} fixedWidth css={tw`mr-1`}/>
-                {!renewable ?
-                    <>This server is exempt from renewals.</>
-                    :
-                    <>This server must be renewed.</>
-                }
             </p>
         </TitledGreyBox>
     );

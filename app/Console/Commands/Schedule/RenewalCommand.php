@@ -11,9 +11,9 @@ use Pterodactyl\Services\Servers\SuspensionService;
 class ProcessRunnableCommand extends Command
 {
     /**
-     * @var \Pterodactyl\Services\Servers\ServerDeletionService
+     * @var \Pterodactyl\Services\Servers\SuspensionService
      */
-    protected $deletionService;
+    protected $suspensionService;
 
     /**
      * @var string
@@ -38,11 +38,9 @@ class ProcessRunnableCommand extends Command
     /**
      * Handle command execution.
      */
-    public function handle()
+    public function handle(Server $server)
     {
-        $servers = Server::query()
-            ->where('renewable', true)
-            ->get();
+        $servers = $server->where('renewable', true)->get();
 
         if ($servers->count() < 1) {
             $this->line('There are no scheduled tasks for servers that need to be run.');
@@ -70,6 +68,13 @@ class ProcessRunnableCommand extends Command
     {
         $servers = $server->where('renewable', true)->get();
 
+
+        // Testing area
+        foreach ($servers as $s) {
+            echo($s); // Works
+            echo($s->id); // Doesn't work
+        }
+
         foreach ($servers as $s) {
             if ($s->renewal = 0 || $s->renewal < 0) {
                 $this->suspensionService->toggle($s, 'suspend');
@@ -77,6 +82,8 @@ class ProcessRunnableCommand extends Command
         }
 
         foreach ($servers as $s) {
+            // $s->renewal is being read as 0 here.
+            // Needs fixing!!
             $server->update(['renewal' => $s->renewal -1]);
         }
     }

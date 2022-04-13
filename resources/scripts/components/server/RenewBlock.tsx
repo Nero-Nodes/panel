@@ -19,9 +19,6 @@ const RenewBlock = () => {
         clearFlashes('server:renewal');
         setSubmit(true);
 
-        console.log('Current renewal: ' + current);
-        console.log('UUID: ' + uuid);
-
         renewServer(uuid, current)
             .then(() => setSubmit(false))
             .then(() => addFlash({
@@ -40,6 +37,9 @@ const RenewBlock = () => {
         <>
             <FlashMessageRender byKey={'server:renewal'} css={tw`mb-1`}/>
             <TitledGreyBox css={tw`break-words`} title={'Renew Server'} icon={faServer}>
+                <p css={tw`text-sm mt-2`}>
+                    Renewal Cost: 25 coins
+                </p>
                 <p css={tw`text-xs mt-2`}>
                     Renewing your server means that it will continue to run 24/7.
                     If you do not renew your server before the days left hits 0,
