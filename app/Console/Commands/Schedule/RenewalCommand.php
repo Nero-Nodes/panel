@@ -84,17 +84,18 @@ class ProcessRunnableCommand extends Command
 
         foreach ($servers as $s) {
             $server->update(['renewal' => $s->renewal -1]);
+            continue;
         }
 
-        $suspend = $s->renewal == 0 || $s->renewal < 0;
-        $delete = $s->renewal == -7 || $s->renewal < -7;
 
         foreach ($servers as $s) {
-            if ($suspend) {
+            if ($s->renewal == 0 || $s->renewal < 0) {
                 $this->suspensionService->toggle($s, 'suspend');
+                continue;
             }
-            if ($delete) {
+            if ($s->renewal == -7 || $s->renewal < -7) {
                 $this->deletionService->handle($s);
+                continue;
             }
         }
         
