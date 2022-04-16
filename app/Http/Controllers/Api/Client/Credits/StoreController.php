@@ -3,7 +3,6 @@
 namespace Pterodactyl\Http\Controllers\Api\Client\Credits;
 
 use Throwable;
-use Pterodactyl\Models\User;
 use Pterodactyl\Models\Node;
 use Illuminate\Support\Facades\DB;
 use Pterodactyl\Exceptions\DisplayException;
@@ -44,10 +43,17 @@ class StoreController extends ClientApiController
         ];
     }
 
-    public function earn(StoreRequest $request, User $user)
+    /**
+     * Add credits to a user when authenticated and
+     * using the panel. Adds every minute. Rate can
+     * be set via the .env configuration file.
+     * 
+     * @throws Throwable
+     */
+    public function earn(StoreRequest $request)
     {
-        $user->update([
-            'cr_balance' => $request->user()->cr_balance + $request['rate'],
+        DB::table('users')->where('id', '=', $request->user()->id)->update([
+            'cr_balance' => $request->user()->cr_balance + env('EARN_RATE', 1),
         ]);
     }
 

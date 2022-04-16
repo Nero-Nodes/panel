@@ -67,7 +67,7 @@ const App = () => {
     }
 
     function earn () {
-        addCoins(1).catch(() => console.error('Unable to add coins.'));
+        addCoins().catch(() => console.error('Unable to add coins.'));
     }
 
     useEffect(() => {
