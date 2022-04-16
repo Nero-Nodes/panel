@@ -66,8 +66,14 @@ const App = () => {
         store.getActions().settings.setSettings(SiteConfiguration!);
     }
 
-    function earn () {
-        addCoins().catch(() => console.error('Unable to add coins.'));
+    function wait (ms: number) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function earn () {
+        await wait(60000);
+        await addCoins()
+            .catch(() => console.error('NeroEarn | Failed to add credits'));
     }
 
     useEffect(() => {
