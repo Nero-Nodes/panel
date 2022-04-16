@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Pterodactyl\Services\Servers\SuspensionService;
 use Pterodactyl\Services\Servers\ServerDeletionService;
 
-class ProcessRunnableCommand extends Command
+class RenewalCommand extends Command
 {
     /**
      * @var \Pterodactyl\Services\Servers\SuspensionService
