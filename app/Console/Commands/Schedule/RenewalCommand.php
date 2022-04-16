@@ -7,6 +7,7 @@ use Throwable;
 use Pterodactyl\Models\Server;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Database\Eloquent\Collection;
 use Pterodactyl\Services\Servers\SuspensionService;
 use Pterodactyl\Services\Servers\ServerDeletionService;
 
@@ -48,30 +49,9 @@ class ProcessRunnableCommand extends Command
      */
     public function handle(Server $server)
     {
-        Http::post(env('WEBHOOK_URL'), ['content' => 'Executing daily renewal script.']);
-
-        $servers = $server->where('renewable', true)->get();
-
-        if ($servers->count() < 1) {
-            Http::post(env('WEBHOOK_URL'), ['content' => 'There are no scheduled tasks for servers that need to be run.']);
-            $this->line('There are no scheduled tasks for servers that need to be run.');
-            return;
-        } else {
-            Http::post(env('WEBHOOK_URL'), ['content' => 'Processing renewals for '.$servers->count().' servers.']);
-            $this->line('Processing renewals for '.$servers->count().' servers.');
-        }
-
-        $bar = $this->output->createProgressBar(count($servers));
-        foreach ($servers as $s) {
-            $bar->clear();
-            $this->process($s);
-            $bar->advance();
-            $bar->display();
-        }
-
-        $this->line('');
-        $this->line('Renewals completed successfully.');
-        Http::post(env('WEBHOOK_URL'), ['content' => 'Renewals completed successfully.']);
+        $this->output('Executing daily renewal script.');    
+        $this->process($server);
+        $this->output('Renewals completed successfully.');
     }
 
     /**
@@ -81,23 +61,30 @@ class ProcessRunnableCommand extends Command
     protected function process(Server $server)
     {
         $servers = $server->where('renewable', true)->get();
+        $this->output('Processing renewals for '.$servers->count().' servers.');
 
-        foreach ($servers as $s) {
-            $server->update(['renewal' => $s->renewal -1]);
-            continue;
-        }
+        foreach ($servers as $svr) {
+            $svr->update(['renewal' => $svr->renewal -1]);
 
-
-        foreach ($servers as $s) {
-            if ($s->renewal == 0 || $s->renewal < 0) {
-                $this->suspensionService->toggle($s, 'suspend');
-                continue;
+            if ($svr->renewal == 0) {
+                $this->suspensionService->toggle($svr, 'suspend');
             }
-            if ($s->renewal == -7 || $s->renewal < -7) {
-                $this->deletionService->handle($s);
-                continue;
+
+            if ($svr->renewal == -7) {
+                $this->deletionService->handle($svr);
             }
-        }
-        
+        };
+    }
+
+    protected function output(string $message)
+    {
+        if (!$message) return;
+        if (!env('WEBHOOK_URL')) return $this->line('No webhook URL specified, unable to send.');
+
+        try {
+            Http::post(env('WEBHOOK_URL'), ['content' => $message]);
+        } catch (Exception $ex) { /* Do nothing */ }
+
+        $this->line($message);
     }
 }

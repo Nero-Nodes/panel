@@ -26,7 +26,7 @@ const ServerConsole = () => {
 
     return (
         <>
-            {renewal < 0 ?
+            {renewal < 1 ?
                 <RenewalSuspended/>
                 :
                 <ServerContentBlock title={'Console'} css={tw`flex flex-col md:flex-row md:space-y-0`}>
