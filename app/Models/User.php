@@ -154,7 +154,7 @@ class User extends Model implements
         'name_last' => 'required|string|between:1,191',
         'password' => 'sometimes|nullable|string',
         'root_admin' => 'boolean',
-        'cr_balance' => 'INT',
+        'cr_balance' => 'int',
         'cr_slots' => 'int',
         'cr_cpu' => 'int',
         'cr_ram' => 'int',
