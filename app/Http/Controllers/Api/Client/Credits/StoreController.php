@@ -16,7 +16,7 @@ use Pterodactyl\Http\Controllers\Api\Client\ClientApiController;
 use Pterodactyl\Exceptions\Service\Deployment\NoViableNodeException;
 use Pterodactyl\Exceptions\Service\Deployment\NoViableAllocationException;
 
-class ServerController extends ClientApiController
+class StoreController extends ClientApiController
 {
     private ServerCreationService $creationService;
     private NodeRepository $nodeRepository;
@@ -118,6 +118,22 @@ class ServerController extends ClientApiController
             'success' => true,
             'data' => [],
         ];
+    }
+
+    /**
+     * @throws DisplayException
+     */
+    public function renewServer(StoreRequest $request, Server $server)
+    {
+        if ($request->user()->cr_balance < 25) {
+            throw new DisplayException('You do not have enough coins to renew this server.');
+        }
+
+        try {
+            $server->renew($request);
+        } catch (DisplayException $e) {
+            throw new DisplayException('There was an error while renewing your server. Please contact support.');
+        }
     }
 
     /**
