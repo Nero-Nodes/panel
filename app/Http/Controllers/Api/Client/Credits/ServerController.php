@@ -8,6 +8,7 @@ use Pterodactyl\Models\Node;
 use Illuminate\Support\Facades\DB;
 use Pterodactyl\Exceptions\DisplayException;
 use Illuminate\Validation\ValidationException;
+use Pterodactyl\Repositories\Eloquent\NodeRepository;
 use Pterodactyl\Http\Requests\Api\Client\StoreRequest;
 use Pterodactyl\Services\Servers\ServerCreationService;
 use Pterodactyl\Exceptions\Repository\RecordNotFoundException;
@@ -15,23 +16,22 @@ use Pterodactyl\Http\Controllers\Api\Client\ClientApiController;
 use Pterodactyl\Exceptions\Service\Deployment\NoViableNodeException;
 use Pterodactyl\Exceptions\Service\Deployment\NoViableAllocationException;
 
-class StoreController extends ClientApiController
+class ServerController extends ClientApiController
 {
-    private Node $node;
     private ServerCreationService $creationService;
+    private NodeRepository $nodeRepository;
 
-    /**
-     * StoreController constructor.
-     */
-    public function __construct(ServerCreationService $creationService, Node $node)
+    public function __construct(ServerCreationService $creationService, NodeRepository $nodeRepository)
     {
         parent::__construct();
-
         $this->creationService = $creationService;
-        $this->node = $node;
+        $this->nodeRepository = $nodeRepository;
     }
 
-
+    /**
+     * @param StoreRequest $request
+     * @return array
+     */
     public function getConfig(StoreRequest $request): array
     {
         $user = DB::table('users')->select('cr_slots', 'cr_cpu', 'cr_ram', 'cr_storage')->where('id', '=', $request->user()->id)->get();
@@ -76,7 +76,7 @@ class StoreController extends ClientApiController
             'owner_id' => $request->user()->id,
             'egg_id' => $egg->id,
             'nest_id' => $nest->id,
-            'allocation_id' => $this->getAllocationId(1),
+            'allocation_id' => $this->getAllocationId(['mem' => $request->input('ram') * 1024, 'disk' => $request->input('storage') * 1024]),
             'environment' => [],
             'memory' => $request->input('ram') * 1024,
             'disk' => $request->input('storage') * 1024,
@@ -102,10 +102,6 @@ class StoreController extends ClientApiController
             $request->user()->cr_storage < $request->input('storage')
         ) {
             throw new DisplayException('You don\'t have the resources available to make this server.');
-            return [
-                'success' => false,
-                'data' => []
-            ];
         }
 
         $server = $this->creationService->handle($data);
@@ -124,36 +120,26 @@ class StoreController extends ClientApiController
         ];
     }
 
-    private function getAllocationId($node_id): int
-    {
-        $allocation = DB::table('allocations')->select('*')->where('node_id', '=', $node_id)->where('server_id', '=', null)->get()->first();
-
-        if (!$allocation) {
-            throw new DisplayException('No allocations are available to deploy a server instance.');
-            return [
-                'success' => false,
-                'data' => []
-            ];
-        };
-
-        return $allocation->id;
-    }
-
     /**
      * @throws DisplayException
-     * @throws Throwable
-     * @throws ValidationException
      */
-    public function renewServer(StoreRequest $request, Server $server)
+    private function getAllocationId(array $data): int
     {
-        if ($request->user()->cr_balance < 25) {
-            throw new DisplayException('You do not have enough coins to renew this server.');
+        $nodes = $this->nodeRepository->getNodesForServerCreation();
+        $available_nodes = [];
+        foreach ($nodes as $node) {
+            $x = $this->nodeRepository->getNodeWithResourceUsage($node['id']);
+            if ($x->getOriginal('sum_memory') <= $x->getOriginal('memory') - $data['mem']) {
+                $available_nodes[] = $x->id;
+            }
         }
-
-        try {
-            $server->renew($request);
-        } catch (DisplayException $e) {
-            throw new DisplayException('There was an error while renewing your server. Please contact support.');
-        }
+        if ($available_nodes > 0) {
+            $node = $available_nodes[0];
+        } else throw new DisplayException('There are no available nodes.');
+        $allocation = DB::table('allocations')->select('*')->where('node_id', '=', $node)->where('server_id', '=', null)->get()->first();
+        if (!$allocation) {
+            throw new DisplayException('No allocations are available to deploy an instance.');
+        };
+        return $allocation->id;
     }
 }
