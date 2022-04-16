@@ -142,6 +142,7 @@ Route::group(['prefix' => '/servers/{server}', 'middleware' => [AuthenticateServ
 |
 */
 Route::group(['prefix' => '/store'], function () {
+    Route::post('/earn', 'Credits\StoreController@earn');
     Route::get('/config', 'Credits\StoreController@getConfig');
     Route::post('/create', 'Credits\StoreController@newServer');
     Route::post('/renew/{server}', 'Servers\RenewalController@renew');

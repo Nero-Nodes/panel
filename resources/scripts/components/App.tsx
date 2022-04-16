@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { hot } from 'react-hot-loader/root';
 import { Route, Router, Switch } from 'react-router-dom';
 import { StoreProvider } from 'easy-peasy';
@@ -13,6 +13,7 @@ import tw, { GlobalStyles as TailwindGlobalStyles } from 'twin.macro';
 import GlobalStylesheet from '@/assets/css/GlobalStylesheet';
 import { history } from '@/components/history';
 import { setupInterceptors } from '@/api/interceptors';
+import addCoins from '@/api/account/addCoins';
 
 interface ExtendedWindow extends Window {
     SiteConfiguration?: SiteSettings;
@@ -64,6 +65,15 @@ const App = () => {
     if (!store.getState().settings.data) {
         store.getActions().settings.setSettings(SiteConfiguration!);
     }
+
+    function earn () {
+        addCoins(1).catch(() => console.error('Unable to add coins.'));
+    }
+
+    useEffect(() => {
+        earn();
+    }, []);
+    setInterval(earn, 60000);
 
     return (
         <>

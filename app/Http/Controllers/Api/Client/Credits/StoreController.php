@@ -3,6 +3,7 @@
 namespace Pterodactyl\Http\Controllers\Api\Client\Credits;
 
 use Throwable;
+use Pterodactyl\Models\User;
 use Pterodactyl\Models\Node;
 use Illuminate\Support\Facades\DB;
 use Pterodactyl\Exceptions\DisplayException;
@@ -41,6 +42,13 @@ class StoreController extends ClientApiController
                 'user' => $user,
             ],
         ];
+    }
+
+    public function earn(StoreRequest $request, User $user)
+    {
+        $user->update([
+            'cr_balance' => $request->user()->cr_balance + $request['rate'],
+        ]);
     }
 
     /**
