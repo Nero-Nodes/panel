@@ -49,9 +49,9 @@ class ProcessRunnableCommand extends Command
      */
     public function handle(Server $server)
     {
-        $this->output('Executing daily renewal script.');    
+        $this->output('Executing daily renewal script.', false);    
         $this->process($server);
-        $this->output('Renewals completed successfully.');
+        $this->output('Renewals completed successfully.', true);
     }
 
     /**
@@ -61,29 +61,34 @@ class ProcessRunnableCommand extends Command
     protected function process(Server $server)
     {
         $servers = $server->where('renewable', true)->get();
-        $this->output('Processing renewals for '.$servers->count().' servers.');
+        $this->output('Processing renewals for '.$servers->count().' servers.', true);
 
         foreach ($servers as $svr) {
-            $svr->update(['renewal' => $svr->renewal -1]);
+            $this->output('Renewing server '.$svr->name, false);
+            $svr->update(['renewal' => $svr->renewal - 1]);
 
-            if ($svr->renewal == 0) {
+            if ($svr->renewal == 0 || $svr->renewal < 0) {
+                $this->output('Suspending server '.$svr->name, false);
                 $this->suspensionService->toggle($svr, 'suspend');
             }
 
-            if ($svr->renewal == -7) {
+            if ($svr->renewal == -7 || $svr->renewal < -7) {
+                $this->output('Deleting'.$svr->name, false);
                 $this->deletionService->handle($svr);
             }
         };
     }
 
-    protected function output(string $message)
+    protected function output(string $message, bool $webhook)
     {
-        if (!$message) return;
+        if (!$message) return $this->line('empty line');
         if (!env('WEBHOOK_URL')) return $this->line('No webhook URL specified, unable to send.');
 
-        try {
-            Http::post(env('WEBHOOK_URL'), ['content' => $message]);
-        } catch (Exception $ex) { /* Do nothing */ }
+        if ($webhook == true) {
+            try {
+                Http::post(env('WEBHOOK_URL'), ['content' => $message]);
+            } catch (Exception $ex) { /* Do nothing */ }
+        }
 
         $this->line($message);
     }
