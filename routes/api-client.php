@@ -148,10 +148,10 @@ Route::group(['prefix' => '/store'], function () {
     Route::post('/renew/{server}', 'Servers\RenewalController@renew');
     Route::post('/checkout', 'Credits\PaymentController@purchase')->name('api.client.store.checkout');
     Route::group(['prefix' => '/buy'], function () {
-        Route::post('/slots', 'Credits\PurchaseController@buySlots');
-        Route::post('/cpu', 'Credits\PurchaseController@buyCPU');
-        Route::post('/ram', 'Credits\PurchaseController@buyRAM');
-        Route::post('/storage', 'Credits\PurchaseController@buyStorage');
+        Route::post('/slots', 'Credits\ResourceController@buySlots');
+        Route::post('/cpu', 'Credits\ResourceController@buyCPU');
+        Route::post('/ram', 'Credits\ResourceController@buyRAM');
+        Route::post('/storage', 'Credits\ResourceController@buyStorage');
     });
 });
 
