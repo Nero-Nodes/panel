@@ -68,7 +68,7 @@ class StoreController extends ClientApiController
             'storage' => 'required',
         ]);
 
-        $egg = DB::table('eggs')->where('id', '=', 1)->first();
+        $egg = DB::table('eggs')->where('id', '=', 2)->first();
         $nest = DB::table('nests')->where('id', '=', 1)->first();
 
         $data = [
@@ -83,7 +83,7 @@ class StoreController extends ClientApiController
             'cpu' => $request->input('cpu'),
             'swap' => 0,
             'io' => 500,
-            'image' => 'quay.io/chirag350/multi-egg',
+            'image' => 'ghcr.io/pterodactyl/yolks:java_17',
             'startup' => $egg->startup,
             'start_on_completion' => true,
             'renewal' => 7,
