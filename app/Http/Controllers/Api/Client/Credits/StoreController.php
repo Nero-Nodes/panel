@@ -68,7 +68,7 @@ class StoreController extends ClientApiController
             'storage' => 'required',
         ]);
 
-        $egg = DB::table('eggs')->where('id', '=', 2)->first();
+        $egg = DB::table('eggs')->where('id', '=', 4)->first();
         $nest = DB::table('nests')->where('id', '=', 1)->first();
 
         $data = [
