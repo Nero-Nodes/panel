@@ -3,7 +3,7 @@
 namespace Pterodactyl\Http\Controllers\Api\Client\Credits;
 
 use Throwable;
-use Pterodactyl\Models\Node;
+use Pterodactyl\Models\Server;
 use Illuminate\Support\Facades\DB;
 use Pterodactyl\Exceptions\DisplayException;
 use Illuminate\Validation\ValidationException;
@@ -20,7 +20,13 @@ class StoreController extends ClientApiController
     private ServerCreationService $creationService;
     private NodeRepository $nodeRepository;
 
-    public function __construct(ServerCreationService $creationService, NodeRepository $nodeRepository)
+    /**
+     * ServerController constructor.
+     */
+    public function __construct(
+        ServerCreationService $creationService,
+        NodeRepository $nodeRepository
+    )
     {
         parent::__construct();
         $this->creationService = $creationService;
@@ -28,8 +34,7 @@ class StoreController extends ClientApiController
     }
 
     /**
-     * @param StoreRequest $request
-     * @return array
+     * Get the configuration for users visiting the store.
      */
     public function getConfig(StoreRequest $request): array
     {
@@ -44,20 +49,8 @@ class StoreController extends ClientApiController
     }
 
     /**
-     * Add credits to a user when authenticated and
-     * using the panel. Adds every minute. Rate can
-     * be set via the .env configuration file.
+     * Deploys a server to Jexactyl via the store.
      * 
-     * @throws Throwable
-     */
-    public function earn(StoreRequest $request)
-    {
-        DB::table('users')->where('id', '=', $request->user()->id)->update([
-            'cr_balance' => $request->user()->cr_balance + env('EARN_RATE', 1),
-        ]);
-    }
-
-    /**
      * @throws DisplayException
      * @throws NoViableNodeException
      * @throws NoViableAllocationException
@@ -127,6 +120,36 @@ class StoreController extends ClientApiController
     }
 
     /**
+     * Deletes a server from the system and adds
+     * resources back to the user when deleted.
+     * 
+     * @throws DisplayException
+     */
+    public function deleteServer(StoreRequest $request, Server $server): array
+    {
+        $user = $request->user();
+        $user->update([
+            'cr_slots' => $user->cr_clots + 1,
+            'cr_cpu' => $user->cr_cpu + $server->cpu,
+            'cr_ram' => $user->cr_ram + $server->memory,
+            'cr_storage' => $user->cr_storage + $server->disk,
+        ]);
+
+        try {
+            $server->delete();
+        } catch (DisplayException $ex) {
+            throw new DisplayException('Unable to delete the server from the system.');
+        }
+
+        return [
+            'success' => true,
+            'data' => []
+        ];
+    }
+
+    /**
+     * Gets an allocation for server deployment.
+     * 
      * @throws DisplayException
      */
     public function renewServer(StoreRequest $request, Server $server)
