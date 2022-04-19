@@ -148,7 +148,7 @@ class StoreController extends ClientApiController
     }
 
     /**
-     * Gets an allocation for server deployment.
+     * Renews the server on the Panel.
      * 
      * @throws DisplayException
      */
@@ -166,6 +166,8 @@ class StoreController extends ClientApiController
     }
 
     /**
+     * Gets an allocation for server deployment.
+     * 
      * @throws DisplayException
      */
     private function getAllocationId(array $data): int
