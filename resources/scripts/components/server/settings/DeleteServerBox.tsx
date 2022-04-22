@@ -54,7 +54,7 @@ export default () => {
             </ConfirmationModal>
             <p css={tw`text-sm`}>
                 This process will add the resources on your server back to your account, so you can re-deploy at any time.
-                <strong css={tw`font-medium`}>
+                <strong css={tw`font-medium mt-1`}>
                     ALL FILES WILL BE DELETED. Please ensure you&apos;ve saved any progress or data before continuing.
                     We are not responsible for your data loss if you perform this action.
                 </strong>
