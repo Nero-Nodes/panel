@@ -79,6 +79,7 @@ const App = () => {
     useEffect(() => {
         earn();
     }, []);
+
     setInterval(earn, 60000);
 
     return (

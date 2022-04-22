@@ -3,6 +3,7 @@
 namespace Pterodactyl\Http\Controllers\Api\Client\Credits;
 
 use Throwable;
+use Pterodactyl\Models\User;
 use Pterodactyl\Models\Server;
 use Illuminate\Support\Facades\DB;
 use Pterodactyl\Exceptions\DisplayException;
@@ -116,6 +117,30 @@ class StoreController extends ClientApiController
         return [
             'success' => true,
             'data' => [],
+        ];
+    }
+
+    /**
+     * Adds x coins per minute to the user when logged into
+     * the Panel, which they can then use to purchase coins.
+     * 
+     * @throws DisplayExcpetion
+     */
+    public function earn(StoreRequest $request): array
+    {
+        $user = $request->user();
+
+        try {
+            User::where('id', $user->id)->update([
+                'cr_balance' => $user->cr_balance + 1,
+            ]);
+        } catch (DisplayException $ex) {
+            throw new DisplayException('Unable to passively earn coins.');
+        }
+
+        return [
+            'success' => true,
+            'data' => []
         ];
     }
 
