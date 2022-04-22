@@ -7,6 +7,7 @@ import renewServer from '@/api/store/renewServer';
 import { ServerContext } from '@/state/server';
 import useFlash from '@/plugins/useFlash';
 import FlashMessageRender from '../FlashMessageRender';
+import { useStoreState } from 'easy-peasy';
 
 const RenewBlock = () => {
     const { addFlash, clearFlashes, clearAndAddHttpError } = useFlash();
@@ -14,6 +15,7 @@ const RenewBlock = () => {
 
     const uuid = ServerContext.useStoreState(state => state.server.data!.uuid);
     const current = ServerContext.useStoreState(state => state.server.data!.renewal);
+    const renewal = useStoreState(state => state.settings.data!.store.cost.renewal);
 
     const submit = () => {
         clearFlashes('server:renewal');
@@ -38,7 +40,7 @@ const RenewBlock = () => {
             <FlashMessageRender byKey={'server:renewal'} css={tw`mb-1`}/>
             <TitledGreyBox css={tw`break-words`} title={'Renew Server'} icon={faServer}>
                 <p css={tw`text-sm mt-2`}>
-                    Renewal Cost: 25 coins
+                    Renewal Cost: {renewal} coins
                 </p>
                 <p css={tw`text-xs mt-2`}>
                     Renewing your server means that it will continue to run 24/7.

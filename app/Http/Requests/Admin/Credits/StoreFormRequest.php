@@ -17,7 +17,8 @@ class StoreFormRequest extends AdminFormRequest
             'cpu_cost' => 'int|nullable',
             'ram_cost' => 'int|nullable',
             'storage_cost' => 'int|nullable',
-            'credits_cost' => 'string|nullable'
+            'credits_cost' => 'string|nullable',
+            'renewal_cost' => 'int|nullable'
         ];
     }
 }

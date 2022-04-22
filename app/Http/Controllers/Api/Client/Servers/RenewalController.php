@@ -10,22 +10,25 @@ use Illuminate\Support\Facades\DB;
 use Pterodactyl\Exceptions\DisplayException;
 use Illuminate\Validation\ValidationException;
 use Pterodactyl\Services\Servers\SuspensionService;
+use Pterodactyl\Contracts\Repository\CreditsRepositoryInterface;
 use Pterodactyl\Http\Controllers\Api\Client\ClientApiController;
 
 class RenewalController extends ClientApiController
 {
-    /**
-     * @var \Pterodactyl\Services\Servers\SuspensionService
-     */
-    protected $suspensionService;
+    private CreditsRepositoryInterface $credits;
+    protected SuspensionService $suspensionService;
 
     /**
      * RenewalController constructor.
      */
-    public function __construct(SuspensionService $suspensionService)
+    public function __construct(
+        CreditsRepositoryInterface $credits,
+        SuspensionService $suspensionService
+    )
     {
         parent::__construct();
 
+        $this->credits = $credits;
         $this->suspensionService = $suspensionService;
     }
 
@@ -36,7 +39,10 @@ class RenewalController extends ClientApiController
      */
     public function renew(Request $request, Server $server)
     {
-        if ($request->user()->cr_balance < 25) {
+        $user = $request->user;
+        $renewal = $this->credits->get('store:renewal_cost');
+
+        if ($user->cr_balance < $renewal) {
             throw new DisplayException('You do not have enough coins to renew this server.');
         }
 
@@ -44,19 +50,12 @@ class RenewalController extends ClientApiController
             Server::where('uuid', $request['uuid'])->update([
                 'renewal' => $request['current'] + 7,
             ]);
-        } catch (DisplayException $e) {
-            throw new DisplayException('There was an error while renewing your server. Please contact support.');
-        }
 
-        try {
-            $user = $request->user()->id;
-            $balance = User::select('cr_balance')->where('id', $user)->get();
-
-            User::where('id', $user)->update([
-                'cr_balance' => $request->user()->cr_balance - 25,
+            User::where('id', $user->id)->update([
+                'cr_balance' => $user->cr_balance - $renewal,
             ]);
         } catch (DisplayException $e) {
-            throw new DisplayException('There was an error while removing coins from your account.');
+            throw new DisplayException('There was an error while renewing your server. Please contact support.');
         }
 
         if ($server->status === 'suspended') {

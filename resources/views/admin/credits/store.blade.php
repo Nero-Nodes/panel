@@ -58,6 +58,11 @@
                                 <input type="text" id="credits_cost" name="credits_cost" class="form-control form-autocomplete-stop" value="{{ $credits_cost }}">
                                 <p class="text-muted"><small>Cost per 100 credits.</small></p>
                             </div>
+                            <div class="form-group col-md-4">
+                                <label class="control-label" for="renewal_cost">Renewal Cost</label>
+                                <input type="text" id="renewal_cost" name="renewal_cost" class="form-control form-autocomplete-stop" value="{{ $renewal_cost }}">
+                                <p class="text-muted"><small>Cost per 7 days of renewal.</small></p>
+                            </div>
                         </div>
                     </div>
                     <div class="box-footer">

@@ -14,6 +14,13 @@ export interface SiteSettings {
     rainbowBar: string;
     store: {
         enabled: string;
+        cost: {
+            slots: number;
+            cpu: number;
+            ram: number;
+            storage: number;
+            renewal: number;
+        }
     }
 }
 

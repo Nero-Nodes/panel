@@ -47,6 +47,13 @@ class AssetComposer
             'rainbowBar' => $this->settings->get('settings::app:rainbow_bar'),
             'store' => [
                 'enabled' => $this->credits->get('store:enabled', 0),
+                'cost' => [
+                    'slots' => $this->credits->get('store:slots_cost', 100),
+                    'cpu' => $this->credits->get('store:cpu_cost', 20),
+                    'ram' => $this->credits->get('store:ram_cost', 10),
+                    'storage' => $this->credits->get('store:storage_cost', 5),
+                    'renewal' => $this->credits->get('store:renewal_cost', 25),
+                ],
             ],
         ]);
     }

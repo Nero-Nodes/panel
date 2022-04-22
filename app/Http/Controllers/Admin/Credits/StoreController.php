@@ -30,7 +30,8 @@ class StoreController extends Controller
             'cpu_cost' => $this->credits->get('store:cpu_cost', 20),
             'ram_cost' => $this->credits->get('store:ram_cost', 10),
             'storage_cost' => $this->credits->get('store:storage_cost', 5),
-            'credits_cost' => $this->credits->get('store:credits_cost', '1.00')
+            'credits_cost' => $this->credits->get('store:credits_cost', '1.00'),
+            'renewal_cost' => $this->credits->get('store:renewal_cost', 25),
         ]);
     }
 

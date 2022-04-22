@@ -8,10 +8,12 @@ import Button from '@/components/elements/Button';
 import buyStorage from '@/api/store/buy/buyStorage';
 import TitledGreyBox from '@/components/elements/TitledGreyBox';
 import { faHdd, faLayerGroup, faMemory, faMicrochip } from '@fortawesome/free-solid-svg-icons';
+import { useStoreState } from '@/state/hooks';
 
 const ActionsRow = () => {
     const { addFlash, clearFlashes, clearAndAddHttpError } = useFlash();
     const [ isSubmit, setSubmit ] = useState(false);
+    const cost = useStoreState(state => state.settings.data!.store.cost);
 
     const submitSlots = () => {
         clearFlashes('resources');
@@ -90,6 +92,7 @@ const ActionsRow = () => {
                 icon={faLayerGroup}
                 css={tw`flex-1 lg:flex-none lg:w-1/4`}
             >
+                Cost: {cost.slots} credits
                 <div css={tw`flex justify-center items-center`}>
                     <Button onClick={() => submitSlots()} disabled={isSubmit}>
                         1 Slot
@@ -101,6 +104,7 @@ const ActionsRow = () => {
                 icon={faMicrochip}
                 css={tw`flex-1 lg:flex-none lg:w-1/4 ml-4`}
             >
+                Cost: {cost.cpu} credits
                 <div css={tw`flex justify-center items-center`}>
                     <Button onClick={() => submitCPU()} disabled={isSubmit}>
                         50% CPU
@@ -112,6 +116,7 @@ const ActionsRow = () => {
                 icon={faMemory}
                 css={tw`flex-1 lg:flex-none lg:w-1/4 ml-4`}
             >
+                Cost: {cost.ram} credits
                 <div css={tw`flex justify-center items-center`}>
                     <Button onClick={() => submitRAM()} disabled={isSubmit}>
                         1GB RAM
@@ -123,6 +128,7 @@ const ActionsRow = () => {
                 icon={faHdd}
                 css={tw`flex-1 lg:flex-none lg:w-1/4 ml-4`}
             >
+                Cost: {cost.storage} credits
                 <div css={tw`flex justify-center items-center`}>
                     <Button onClick={() => submitStorage()} disabled={isSubmit}>
                         1GB Storage

@@ -154,10 +154,6 @@ class StoreController extends ClientApiController
      */
     public function renewServer(StoreRequest $request, Server $server)
     {
-        if ($request->user()->cr_balance < 25) {
-            throw new DisplayException('You do not have enough coins to renew this server.');
-        }
-
         try {
             $server->renew($request);
         } catch (DisplayException $e) {
