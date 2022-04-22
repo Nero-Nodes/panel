@@ -39,7 +39,7 @@ class RenewalController extends ClientApiController
      */
     public function renew(Request $request, Server $server)
     {
-        $user = $request->user;
+        $user = $request->user();
         $renewal = $this->credits->get('store:renewal_cost');
 
         if ($user->cr_balance < $renewal) {
