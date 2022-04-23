@@ -77,7 +77,8 @@ const ServerDetailsBlock = () => {
         allocation => (allocation.alias || formatIp(allocation.ip)) + ':' + allocation.port,
     )).toString();
 
-    const renewal = ServerContext.useStoreState(state => state.server.data?.renewal);
+    const renewal = ServerContext.useStoreState(state => state.server.data!.renewal);
+    const renewable = ServerContext.useStoreState(state => state.server.data!.renewable);
 
     const diskLimit = limits.disk ? megabytesToHuman(limits.disk) : 'Unlimited';
     const memoryLimit = limits.memory ? megabytesToHuman(limits.memory) : 'Unlimited';
@@ -122,9 +123,11 @@ const ServerDetailsBlock = () => {
             <p css={tw`text-xs mt-2`}>
                 <FontAwesomeIcon icon={faNetworkWired} fixedWidth css={tw`mr-1`}/>&nbsp;{bpsToHuman(stats.networkDataRate)}
             </p>
-            <p css={tw`text-xs mt-2`}>
-                <FontAwesomeIcon icon={faCoins} fixedWidth css={tw`mr-1`}/> {renewal} days until renewal
-            </p>
+            {renewable === true &&
+                <p css={tw`text-xs mt-2`}>
+                    <FontAwesomeIcon icon={faCoins} fixedWidth css={tw`mr-1`}/> {renewal} days until renewal
+                </p>
+            }
         </TitledGreyBox>
     );
 };

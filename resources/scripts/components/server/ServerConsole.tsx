@@ -75,7 +75,9 @@ const ServerConsole = () => {
                             <ServerDetailsBlock/>
                         </Spinner.Suspense>
                         <Spinner.Suspense>
-                            <RenewBlock/>
+                            {renewable === true &&
+                                <RenewBlock/>
+                            }
                         </Spinner.Suspense>
                         <React.Suspense fallback={null}>
                             {eggFeatures.includes('eula') && <EulaModalFeature/>}
