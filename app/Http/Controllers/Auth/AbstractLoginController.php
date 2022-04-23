@@ -81,7 +81,7 @@ abstract class AbstractLoginController extends Controller
         $this->clearLoginAttempts($request);
 
         DB::table('users')->where('id', $user->id)->update([
-            'logins', $user->logins + 1
+            'logins' => $user->logins + 1
         ]);
 
         $this->auth->guard()->login($user, true);
