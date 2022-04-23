@@ -75,8 +75,10 @@ const ServerConsole = () => {
                             <ServerDetailsBlock/>
                         </Spinner.Suspense>
                         <Spinner.Suspense>
-                            {renewable === true &&
-                                <RenewBlock/>
+                            {renewable === true ?
+                                <RenewBlock status/>
+                                :
+                                <RenewBlock status={false}/>
                             }
                         </Spinner.Suspense>
                         <React.Suspense fallback={null}>
