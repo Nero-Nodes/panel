@@ -13,7 +13,7 @@ export interface SiteSettings {
     particles: string;
     rainbowBar: string;
     store: {
-        enabled: boolean;
+        enabled: string;
         cost: {
             slots: number;
             cpu: number;

@@ -123,7 +123,7 @@ const ServerDetailsBlock = () => {
             <p css={tw`text-xs mt-2`}>
                 <FontAwesomeIcon icon={faNetworkWired} fixedWidth css={tw`mr-1`}/>&nbsp;{bpsToHuman(stats.networkDataRate)}
             </p>
-            {renewable === true ?
+            {renewable === '1' ?
                 <p css={tw`text-xs mt-2`}>
                     <FontAwesomeIcon icon={faCoins} fixedWidth css={tw`mr-1`}/> {renewal} days until renewal
                 </p>

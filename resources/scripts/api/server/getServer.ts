@@ -44,7 +44,7 @@ export interface Server {
     variables: ServerEggVariable[];
     allocations: Allocation[];
     renewal: number;
-    renewable: boolean | null;
+    renewable: string;
 }
 
 export const rawDataToServerObject = ({ attributes: data }: FractalResponseData): Server => ({

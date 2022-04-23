@@ -40,7 +40,7 @@ const RenewBlock = () => {
         <>
             <FlashMessageRender byKey={'server:renewal'} css={tw`mb-1`}/>
             <TitledGreyBox css={tw`break-words`} title={'Renew Server'} icon={faServer}>
-                {renewable === true ?
+                {renewable === '1' ?
                     <>
                         <p css={tw`text-sm mt-2`}>
                             Renewal Cost: {renewal} coins
