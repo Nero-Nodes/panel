@@ -95,7 +95,7 @@ const ServerRouter = ({ match, location }: RouteComponentProps<{ id: string }>) 
     const avatarURL = useStoreState((state: State<ApplicationStore>) => state.user.data!.avatarURL);
     const rootAdmin = useStoreState(state => state.user.data!.rootAdmin);
     const name = useStoreState((state: State<ApplicationStore>) => state.settings.data!.name);
-    const email = useStoreState((state: State<ApplicationStore>) => state.user.data!.email);
+    const username = useStoreState((state: State<ApplicationStore>) => state.user.data!.username);
     const crBalance = useStoreState((state: State<ApplicationStore>) => state.user.data!.crBalance);
     const storeEnabled = useStoreState((state: State<ApplicationStore>) => state.settings.data!.store.enabled);
 
@@ -191,7 +191,7 @@ const ServerRouter = ({ match, location }: RouteComponentProps<{ id: string }>) 
                     <img src={`${avatarURL}?s=64`} alt="Profile Picture" css={tw`h-10 w-10 rounded-full select-none`}/>
                         }
                         <div css={tw`flex flex-col ml-3`}>
-                            <span css={tw`font-sans font-normal text-sm text-neutral-50 whitespace-nowrap leading-tight select-none`}>{email}</span>
+                            <span css={tw`font-sans font-normal text-sm text-neutral-50 whitespace-nowrap leading-tight select-none`}>{username}</span>
                             <span css={tw`font-header font-normal text-xs text-neutral-300 whitespace-nowrap leading-tight select-none`}>{crBalance} credits</span>
                         </div>
                     </Sidebar.User>
