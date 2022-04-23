@@ -23,10 +23,11 @@ const ServerConsole = () => {
     const isTransferring = ServerContext.useStoreState(state => state.server.data!.isTransferring);
     const eggFeatures = ServerContext.useStoreState(state => state.server.data!.eggFeatures, isEqual);
     const renewal = ServerContext.useStoreState(state => state.server.data!.renewal);
+    const renewable = ServerContext.useStoreState(state => state.server.data!.renewable);
 
     return (
         <>
-            {renewal < 1 ?
+            {renewal < 1 && renewable === true ?
                 <RenewalSuspended/>
                 :
                 <ServerContentBlock title={'Console'} css={tw`flex flex-col md:flex-row md:space-y-0`}>
