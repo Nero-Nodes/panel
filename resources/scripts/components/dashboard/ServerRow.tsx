@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLayerGroup, faMemory, faMicrochip } from '@fortawesome/free-solid-svg-icons';
+import { faCoins, faLayerGroup, faMemory, faMicrochip } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import { Server } from '@/api/server/getServer';
 import getServerResourceUsage, { ServerPowerState, ServerStats } from '@/api/server/getServerResourceUsage';
@@ -19,7 +19,7 @@ const Icon = memo(styled(FontAwesomeIcon)<{ $alarm: boolean }>`
     ${props => props.$alarm ? tw`text-red-400` : tw`text-neutral-500`};
 `, isEqual);
 
-const IconDescription = styled.p<{ $alarm: boolean }>`
+const IconDescription = styled.p<{ $alarm?: boolean }>`
     ${tw`text-sm ml-2`};
     ${props => props.$alarm ? tw`text-white` : tw`text-neutral-400`};
 `;
@@ -139,6 +139,16 @@ export default ({ server, className }: { server: Server; className?: string }) =
                                     </IconDescription>
                                 </div>
                             </div>
+                            {server.renewable === '1' &&
+                                <div css={tw`flex-1 ml-4 sm:block hidden`}>
+                                    <div css={tw`flex justify-center`}>
+                                        <Icon icon={faCoins}/>
+                                        <IconDescription>
+                                            {server.renewal} days
+                                        </IconDescription>
+                                    </div>
+                                </div>
+                            }
                         </React.Fragment>
                     }
                 </div>
