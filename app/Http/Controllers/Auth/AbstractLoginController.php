@@ -81,6 +81,10 @@ abstract class AbstractLoginController extends Controller
 
         $this->auth->guard()->login($user, true);
 
+        $user->update([
+            'logins', $user->logins + 1
+        ]);
+
         return new JsonResponse([
             'complete' => true,
             'methods' => [],

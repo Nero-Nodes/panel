@@ -14,6 +14,7 @@ import { PaginatedResult } from '@/api/http';
 import Pagination from '@/components/elements/Pagination';
 import { useLocation } from 'react-router-dom';
 import FlashMessageRender from '@/components/FlashMessageRender';
+import NewUserContainer from '@/components/dashboard/NewUserContainer';
 
 export default () => {
     const { search } = useLocation();
@@ -23,6 +24,7 @@ export default () => {
     const { clearFlashes, clearAndAddHttpError } = useFlash();
     const uuid = useStoreState(state => state.user.data!.uuid);
     const rootAdmin = useStoreState(state => state.user.data!.rootAdmin);
+    const logins = useStoreState(state => state.user.data!.logins);
     const [ showOnlyAdmin, setShowOnlyAdmin ] = usePersistedState(`${uuid}:show_all_servers`, false);
 
     const { data: servers, error } = useSWR<PaginatedResult<Server>>(
@@ -50,37 +52,39 @@ export default () => {
     }, [ error ]);
 
     return (
-        <PageContentBlock title={'Dashboard'} showFlashKey={'dashboard'}>
-            <div css={tw`w-full`}>
-                <FlashMessageRender byKey={'account:store:deployed'} css={tw`mb-4`} />
-            </div>
-            {rootAdmin &&
-            <div css={tw`mb-2 flex justify-end items-center`}>
-                <Switch
-                    name={'show_all_servers'}
-                    defaultChecked={showOnlyAdmin}
-                    onChange={() => setShowOnlyAdmin(s => !s)}
-                />
-            </div>
+        <>
+            {logins === 1 ? <NewUserContainer/> :
+                <PageContentBlock title={'Dashboard'} showFlashKey={'dashboard'}>
+                    <FlashMessageRender byKey={'account:store:deployed'} css={tw`w-full mb-4`}/>
+                    {rootAdmin &&
+                    <div css={tw`mb-2 flex justify-end items-center`}>
+                        <Switch
+                            name={'show_all_servers'}
+                            defaultChecked={showOnlyAdmin}
+                            onChange={() => setShowOnlyAdmin(s => !s)}
+                        />
+                    </div>
+                    }
+                    <div className={'row'}>
+                        {!servers ?
+                            <Spinner centered size={'large'}/>
+                            :
+                            <Pagination data={servers} onPageSelect={setPage}>
+                                {({ items }) => (
+                                    items.length > 0 &&
+                                        items.map((server) => (
+                                            <ServerRow
+                                                key={server.uuid}
+                                                server={server}
+                                            />
+                                        )
+                                        )
+                                )}
+                            </Pagination>
+                        }
+                    </div>
+                </PageContentBlock>
             }
-            <div className={'row'}>
-                {!servers ?
-                    <Spinner centered size={'large'}/>
-                    :
-                    <Pagination data={servers} onPageSelect={setPage}>
-                        {({ items }) => (
-                            items.length > 0 &&
-                                items.map((server) => (
-                                    <ServerRow
-                                        key={server.uuid}
-                                        server={server}
-                                    />
-                                )
-                                )
-                        )}
-                    </Pagination>
-                }
-            </div>
-        </PageContentBlock>
+        </>
     );
 };

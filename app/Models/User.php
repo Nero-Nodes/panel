@@ -37,6 +37,7 @@ use Pterodactyl\Notifications\SendPasswordReset as ResetPasswordNotification;
  * @property bool $use_totp
  * @property string|null $totp_secret
  * @property \Carbon\Carbon|null $totp_authenticated_at
+ * @property int|null $logins
  * @property bool $gravatar
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
