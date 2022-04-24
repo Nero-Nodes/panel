@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink, Route, RouteComponentProps, Switch } from 'react-router-dom';
 import AccountOverviewContainer from '@/components/dashboard/AccountOverviewContainer';
 import DashboardContainer from '@/components/dashboard/DashboardContainer';
@@ -8,7 +8,7 @@ import { NotFound } from '@/components/elements/ScreenBlock';
 import TransitionRouter from '@/TransitionRouter';
 import tw from 'twin.macro';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLayerGroup, faLock, faSignOutAlt, faSitemap, faUser, faCog, faStore, faBell } from '@fortawesome/free-solid-svg-icons';
+import { faLayerGroup, faLock, faSignOutAlt, faSitemap, faUser, faCog, faStore, faBell, faSearch } from '@fortawesome/free-solid-svg-icons';
 import Sidebar from '@/components/elements/Sidebar';
 import { useStoreState } from '@/state/hooks';
 import { ApplicationStore } from '@/state';
@@ -20,9 +20,11 @@ import StaticSubNavigation from '@/components/elements/StaticSubNavigation';
 import Spinner from '@/components/elements/Spinner';
 import ProgressBar from '@/components/elements/ProgressBar';
 import AccountNotificationsContainer from '@/components/dashboard/AccountNotificationsContainer';
+import SearchModal from '@/components/dashboard/search/SearchModal';
 
 const DashboardRouter = ({ location }: RouteComponentProps) => {
     const { width } = useWindowDimensions();
+    const [ visible, setVisible ] = useState(false);
 
     const avatarURL = useStoreState((state: State<ApplicationStore>) => state.user.data!.avatarURL);
     const name = useStoreState((state: State<ApplicationStore>) => state.settings.data!.name);
@@ -46,6 +48,21 @@ const DashboardRouter = ({ location }: RouteComponentProps) => {
                     <h1 css={tw`text-2xl text-neutral-50 whitespace-nowrap font-medium`}><a href="/">{name}</a></h1>
                 </div>
                 <Sidebar.Wrapper>
+                    {visible &&
+                        <SearchModal
+                            appear
+                            visible={visible}
+                            onDismissed={() => setVisible(false)}
+                        />
+                    }
+                    {rootAdmin &&
+                        <a onClick={() => setVisible(true)} css={tw`flex justify-center text-center mb-4`}>
+                            <p css={tw`font-bold`}>
+                                <FontAwesomeIcon icon={faSearch} css={tw`mr-1`}/>
+                                Search
+                            </p>
+                        </a>
+                    }
                     {location.pathname.endsWith('/') ?
                         <Sidebar.Section>Dashboard - Servers</Sidebar.Section>
                         : location.pathname.endsWith('/account') ?
