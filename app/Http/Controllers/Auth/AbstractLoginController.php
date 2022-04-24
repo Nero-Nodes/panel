@@ -7,7 +7,6 @@ use Pterodactyl\Models\User;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Auth\Events\Failed;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Container\Container;
 use Pterodactyl\Exceptions\DisplayException;
 use Pterodactyl\Http\Controllers\Controller;
@@ -79,10 +78,6 @@ abstract class AbstractLoginController extends Controller
         $request->session()->regenerate();
 
         $this->clearLoginAttempts($request);
-
-        DB::table('users')->where('id', $user->id)->update([
-            'logins' => $user->logins + 1
-        ]);
 
         $this->auth->guard()->login($user, true);
 
