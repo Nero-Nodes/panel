@@ -10,7 +10,7 @@
 */
 Route::group(['middleware' => 'guest'], function () {
     // These routes are defined so that we can continue to reference them programatically.
-    // They all route to the same controller function which passes off to Vuejs.
+    // They all route to the same controller function which passes off to React.
     Route::get('/login', 'LoginController@index')->name('auth.login');
     Route::get('/password', 'LoginController@index')->name('auth.forgot-password');
     Route::get('/password/reset/{token}', 'LoginController@index')->name('auth.reset');
@@ -25,6 +25,9 @@ Route::group(['middleware' => 'guest'], function () {
         Route::post('/login/checkpoint', 'LoginCheckpointController')->name('auth.login-checkpoint');
 
         Route::post('/login/checkpoint/key', 'WebauthnController@auth');
+
+        Route::post('/login/discord', 'DiscordLoginController@redirect');
+        Route::get('/login/callback', 'DiscordLoginController@callback');
 
         Route::get('/register', 'RegisterController@index')->name('auth.register');
         Route::post('/register', 'RegisterController@register')->middleware('recaptcha');
