@@ -56,5 +56,5 @@ Route::group(['middleware' => 'guest'], function () {
 */
 Route::post('/logout', 'LoginController@logout')->name('auth.logout')->middleware('auth', 'csrf');
 
-Route::post('/discord', 'DiscordController@login')->name('auth.discord.login');
+Route::post('/discord/login', 'DiscordController@login')->name('auth.discord.login');
 Route::get('/discord/callback', 'DiscordController@callback')->name('auth.discord.callback');

@@ -1,8 +1,7 @@
 import http from '@/api/http';
-import { AxiosResponse } from "axios";
 
 export default (): Promise<any> => {
     return new Promise((resolve, reject) => {
-        http.post('/auth/discord').then((data: AxiosResponse) => resolve(data.data || [])).catch(reject);
+        http.post('/auth/discord/login').then((data) => resolve(data.data || [])).catch(reject);
     });
 };
