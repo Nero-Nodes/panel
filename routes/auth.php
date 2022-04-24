@@ -16,7 +16,7 @@ Route::group(['middleware' => 'guest'], function () {
     Route::get('/password/reset/{token}', 'LoginController@index')->name('auth.reset');
 
     // Apply a throttle to authentication action endpoints, in addition to the
-    // recaptcha endpoints to slow down manual attack spammers even more. 🤷‍
+    // recaptcha endpoints to slow down manual attack spammers even more. 🤷
     //
     // @see \Pterodactyl\Providers\RouteServiceProvider
     Route::middleware(['throttle:authentication'])->group(function () {
@@ -55,3 +55,6 @@ Route::group(['middleware' => 'guest'], function () {
 |
 */
 Route::post('/logout', 'LoginController@logout')->name('auth.logout')->middleware('auth', 'csrf');
+
+Route::post('/discord', 'DiscordController@login')->name('auth.discord.login');
+Route::get('/discord/callback', 'DiscordController@callback')->name('auth.discord.callback');

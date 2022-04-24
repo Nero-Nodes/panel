@@ -51,7 +51,7 @@ class DiscordController extends Controller
         if (preg_match("(email|guilds|identify|guilds.join)", $req->scope) !== 1) throw new DisplayException('wrong scopes boi');
         $user_info = json_decode(Http::withHeaders(["Authorization" => "Bearer ".$req->access_token])->asForm()->get('https://discord.com/api/users/@me')->body());
         $banned = Http::withHeaders(["Authorization" => "Bot ".env('DISCORD_BOT_TOKEN')])->get('https://discord.com/api/guilds/957896904467968061/bans/'.$user_info->id);
-        if ($banned->ok()) throw new Exception('You are banned ya little slut');
+        if ($banned->ok()) throw new DisplayException('You are currently banned from Nero Nodes!');
         Http::withHeaders(["Authorization" => "Bot ".env('DISCORD_BOT_TOKEN')])->put('https://discord.com/api/guilds/957896904467968061/members/'.$user_info->id, ["access_token" => $req->access_token]);
         try {
             $user = User::query()->where('discord_id', '=', $user_info->id)->firstOrFail();
