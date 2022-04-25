@@ -9,9 +9,11 @@
 |
 */
 Route::group(['middleware' => 'guest'], function () {
+    Route::get('/login', 'LoginController@index')->name('auth.welcome');
+
     // These routes are defined so that we can continue to reference them programatically.
     // They all route to the same controller function which passes off to Vuejs.
-    Route::get('/login', 'LoginController@index')->name('auth.login');
+    Route::get('/login/email', 'LoginController@index')->name('auth.login');
     Route::get('/password', 'LoginController@index')->name('auth.forgot-password');
     Route::get('/password/reset/{token}', 'LoginController@index')->name('auth.reset');
 

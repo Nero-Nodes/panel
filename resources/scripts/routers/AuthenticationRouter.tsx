@@ -9,6 +9,7 @@ import ResetPasswordContainer from '@/components/auth/ResetPasswordContainer';
 import RegisterContainer from '@/components/auth/RegisterContainer';
 import { NotFound } from '@/components/elements/ScreenBlock';
 import { useStoreState } from 'easy-peasy';
+import WelcomeContainer from '@/components/auth/WelcomeContainer';
 
 export default ({ location, history, match }: RouteComponentProps) => {
     const userRegistration = useStoreState(state => state.settings.data!.userRegistration);
@@ -20,7 +21,8 @@ export default ({ location, history, match }: RouteComponentProps) => {
                     {userRegistration === '1' &&
                             <Route path={`${match.path}/register`} component={RegisterContainer} exact/>
                     }
-                    <Route path={`${match.path}/login`} component={LoginContainer} exact/>
+                    <Route path={`${match.path}/login`} component={WelcomeContainer} exact/>
+                    <Route path={`${match.path}/login/email`} component={LoginContainer} exact/>
                     <Route path={`${match.path}/login/checkpoint`} component={LoginCheckpointContainer}/>
                     <Route path={`${match.path}/login/key`} component={LoginKeyCheckpointContainer}/>
                     <Route path={`${match.path}/password`} component={ForgotPasswordContainer} exact/>
