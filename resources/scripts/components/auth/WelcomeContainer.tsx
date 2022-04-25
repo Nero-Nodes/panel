@@ -1,5 +1,4 @@
 import React from 'react';
-import LoginFormContainer from '@/components/auth/LoginFormContainer';
 import tw from 'twin.macro';
 import Button from '@/components/elements/Button';
 import useFlash from '@/plugins/useFlash';
@@ -7,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import discord from '@/api/auth/discord';
 import { faAt, faCommentDots } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
+import WelcomeFormContainer from '@/components/auth/WelcomeFormContainer';
 
 const WelcomeContainer = () => {
     const { clearFlashes, clearAndAddHttpError } = useFlash();
@@ -23,7 +23,7 @@ const WelcomeContainer = () => {
     };
 
     return (
-        <LoginFormContainer title={'Welcome to Nero!'} css={tw`w-full flex`}>
+        <WelcomeFormContainer css={tw`w-full flex`}>
             <div css={tw`mt-6`}>
                 <Button size={'xlarge'} onSubmit={onSubmit}>
                     <FontAwesomeIcon icon={faCommentDots}/> Login with Discord
@@ -36,7 +36,7 @@ const WelcomeContainer = () => {
                     </Button>
                 </Link>
             </div>
-        </LoginFormContainer>
+        </WelcomeFormContainer>
     );
 };
 
