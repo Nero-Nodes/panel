@@ -45,6 +45,7 @@ import {
     faStore,
     faHome,
     faBell,
+    faSearch,
 } from '@fortawesome/free-solid-svg-icons';
 import RequireServerPermission from '@/hoc/RequireServerPermission';
 import ServerInstallSvg from '@/assets/images/server_installing.svg';
@@ -54,6 +55,7 @@ import tw from 'twin.macro';
 import { ApplicationStore } from '@/state';
 import useWindowDimensions from '@/plugins/useWindowDimensions';
 import ProgressBar from '@/components/elements/ProgressBar';
+import SearchModal from '@/components/dashboard/search/SearchModal';
 
 const ConflictStateRenderer = () => {
     const status = ServerContext.useStoreState(state => state.server.data?.status || null);
@@ -84,6 +86,7 @@ const ConflictStateRenderer = () => {
 
 const ServerRouter = ({ match, location }: RouteComponentProps<{ id: string }>) => {
     const [ error, setError ] = useState('');
+    const [ visible, setVisible ] = useState(false);
     const { width } = useWindowDimensions();
 
     const id = ServerContext.useStoreState(state => state.server.data?.id);
@@ -133,6 +136,21 @@ const ServerRouter = ({ match, location }: RouteComponentProps<{ id: string }>) 
                         <h1 css={tw`text-2xl text-neutral-50 whitespace-nowrap font-medium`}><a href="/">{name}</a></h1>
                     </div>
                     <Sidebar.Wrapper>
+                        {visible &&
+                            <SearchModal
+                                appear
+                                visible={visible}
+                                onDismissed={() => setVisible(false)}
+                            />
+                        }
+                        {rootAdmin &&
+                            <a onClick={() => setVisible(true)} css={tw`flex justify-center text-center mb-4`}>
+                                <p css={tw`font-bold`}>
+                                    <FontAwesomeIcon icon={faSearch} css={tw`mr-1`}/>
+                                    Search
+                                </p>
+                            </a>
+                        }
                         {location.pathname.endsWith(`/server/${id}`) ?
                             <Sidebar.Section>Server - Console</Sidebar.Section>
                             : location.pathname.startsWith(`/server/${id}/files`) ?

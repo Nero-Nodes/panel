@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import tw from 'twin.macro';
 import Button from '@/components/elements/Button';
 import useFlash from '@/plugins/useFlash';
@@ -10,14 +10,18 @@ import WelcomeFormContainer from '@/components/auth/WelcomeFormContainer';
 
 const WelcomeContainer = () => {
     const { clearFlashes, clearAndAddHttpError } = useFlash();
+    const [ loading, setLoading ] = useState(false);
 
     const onSubmit = () => {
         clearFlashes();
+        setLoading(true);
+
+        console.log('Authenticating with Discord API');
 
         discord()
+            .then(() => setLoading(false))
             .catch(error => {
                 console.error(error);
-
                 clearAndAddHttpError({ error });
             });
     };
@@ -25,7 +29,7 @@ const WelcomeContainer = () => {
     return (
         <WelcomeFormContainer css={tw`w-full flex`}>
             <div css={tw`mt-6`}>
-                <Button size={'xlarge'} onSubmit={onSubmit}>
+                <Button size={'xlarge'} onSubmit={onSubmit} disabled={loading}>
                     <FontAwesomeIcon icon={faCommentDots}/> Login with Discord
                 </Button>
             </div>

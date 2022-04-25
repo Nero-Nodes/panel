@@ -11,6 +11,9 @@
 Route::group(['middleware' => 'guest'], function () {
     Route::get('/login', 'LoginController@index')->name('auth.welcome');
 
+    Route::post('/discord/login', 'DiscordController@login')->name('auth.discord.login');
+    Route::get('/discord/callback', 'DiscordController@callback')->name('auth.discord.callback');
+
     // These routes are defined so that we can continue to reference them programatically.
     // They all route to the same controller function which passes off to Vuejs.
     Route::get('/login/email', 'LoginController@index')->name('auth.login');
@@ -57,6 +60,3 @@ Route::group(['middleware' => 'guest'], function () {
 |
 */
 Route::post('/logout', 'LoginController@logout')->name('auth.logout')->middleware('auth', 'csrf');
-
-Route::post('/discord/login', 'DiscordController@login')->name('auth.discord.login');
-Route::get('/discord/callback', 'DiscordController@callback')->name('auth.discord.callback');

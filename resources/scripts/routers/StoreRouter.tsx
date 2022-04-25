@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink, Route, RouteComponentProps, Switch } from 'react-router-dom';
 import TransitionRouter from '@/TransitionRouter';
 import tw from 'twin.macro';
@@ -9,7 +9,7 @@ import { State } from 'easy-peasy';
 import { ApplicationStore } from '@/state';
 import Sidebar from '@/components/elements/Sidebar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLayerGroup, faLock, faSignOutAlt, faSitemap, faUser, faCog, faStore, faBell } from '@fortawesome/free-solid-svg-icons';
+import { faLayerGroup, faLock, faSignOutAlt, faSitemap, faUser, faCog, faStore, faBell, faSearch } from '@fortawesome/free-solid-svg-icons';
 import http from '@/api/http';
 import useWindowDimensions from '@/plugins/useWindowDimensions';
 import StaticSubNavigation from '@/components/elements/StaticSubNavigation';
@@ -19,9 +19,11 @@ import ProgressBar from '@/components/elements/ProgressBar';
 import PaymentSuccessContainer from '@/components/store/payments/PaymentSuccessContainer';
 import PaymentCancelContainer from '@/components/store/payments/PaymentCancelContainer';
 import { NotFound } from '@/components/elements/ScreenBlock';
+import SearchModal from '@/components/dashboard/search/SearchModal';
 
 const StoreRouter = ({ location, match }: RouteComponentProps) => {
     const { width } = useWindowDimensions();
+    const [ visible, setVisible ] = useState(false);
 
     const avatarURL = useStoreState((state: State<ApplicationStore>) => state.user.data!.avatarURL);
     const name = useStoreState((state: State<ApplicationStore>) => state.settings.data!.name);
@@ -45,6 +47,21 @@ const StoreRouter = ({ location, match }: RouteComponentProps) => {
                     <h1 css={tw`text-2xl text-neutral-50 whitespace-nowrap font-medium`}><a href="/">{name}</a></h1>
                 </div>
                 <Sidebar.Wrapper>
+                    {visible &&
+                        <SearchModal
+                            appear
+                            visible={visible}
+                            onDismissed={() => setVisible(false)}
+                        />
+                    }
+                    {rootAdmin &&
+                        <a onClick={() => setVisible(true)} css={tw`flex justify-center text-center mb-4`}>
+                            <p css={tw`font-bold`}>
+                                <FontAwesomeIcon icon={faSearch} css={tw`mr-1`}/>
+                                Search
+                            </p>
+                        </a>
+                    }
                     {location.pathname.endsWith('/store') ?
                         <Sidebar.Section>Store - Home</Sidebar.Section>
                         : location.pathname.endsWith('/store/servers/new') ?
