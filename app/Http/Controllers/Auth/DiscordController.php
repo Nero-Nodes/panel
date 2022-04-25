@@ -56,9 +56,9 @@ class DiscordController extends Controller
         $req = json_decode($code->body());
         if (preg_match("(email|guilds|identify|guilds.join)", $req->scope) !== 1) throw new DisplayException('Invalid Authorized Scopes');
         $user_info = json_decode(Http::withHeaders(["Authorization" => "Bearer ".$req->access_token])->asForm()->get('https://discord.com/api/users/@me')->body());
-        $banned = Http::withHeaders(["Authorization" => "Bot ".config('bot_token')])->get('https://discord.com/api/guilds/957896904467968061/bans/'.$user_info->id);
+        $banned = Http::withHeaders(["Authorization" => "Bot ".config('bot_token')])->get('https://discord.com/api/guilds/'.config('discord.guild_id').'/bans/'.$user_info->id);
         if ($banned->ok()) throw new DisplayException('This account has been deactivated by Nero. Please contact us for support at https://neronodes.net/discord.');
-        Http::withHeaders(["Authorization" => "Bot ".config('bot_token')])->put('https://discord.com/api/guilds/957896904467968061/members/'.$user_info->id, ["access_token" => $req->access_token]);
+        Http::withHeaders(["Authorization" => "Bot ".config('bot_token')])->put('https://discord.com/api/guilds/'.config('discord.guild_id').'/members/'.$user_info->id, ["access_token" => $req->access_token]);
         $user = User::query()->where('discord_id', '=', $user_info->id)->first()->get()[0];
         if (!isset($user)) {
             $new_user = [
