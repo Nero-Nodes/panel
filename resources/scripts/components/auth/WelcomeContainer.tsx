@@ -19,6 +19,10 @@ const WelcomeContainer = () => {
         console.log('Authenticating with Discord API');
 
         discord()
+            .then((data) => {
+                if (!data) return clearAndAddHttpError({ error: 'Discord auth failed. Please try again.' });
+                window.location.href = data;
+            })
             .then(() => setLoading(false))
             .catch(error => {
                 console.error(error);
