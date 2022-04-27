@@ -33,7 +33,7 @@ const WelcomeContainer = () => {
     return (
         <WelcomeFormContainer css={tw`w-full flex`}>
             <div css={tw`mt-6`}>
-                <Button size={'xlarge'} onSubmit={onSubmit} disabled={loading}>
+                <Button type={'button'} size={'xlarge'} onClick={() => onSubmit()} disabled={loading}>
                     <FontAwesomeIcon icon={faCommentDots}/> Login with Discord
                 </Button>
             </div>
