@@ -68,7 +68,7 @@ const WelcomeContainer = () => {
                     </Button>
                 </Link>
             </div>
-            <div css={tw`mt-12`}>
+            <div css={tw`mt-6`}>
                 <Link to={'/auth/register'}>
                     <Button size={'xlarge'}>
                         <FontAwesomeIcon icon={faAt}/> Signup with Email

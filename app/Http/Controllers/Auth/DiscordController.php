@@ -36,7 +36,7 @@ class DiscordController extends Controller
      */
     public function authorizeLogin(): JsonResponse
     {
-        return new JsonResponse(['https://discord.com/api/oauth2/authorize?client_id='.config('discord.client_id').'&redirect_uri='.urlencode(config('discord.redirect_url')).'/login&response_type=code&scope=identify%20email%20guilds%20guilds.join'], 200, [], null, false);
+        return new JsonResponse(['https://discord.com/api/oauth2/authorize?client_id='.config('discord.client_id').'&redirect_uri='.urlencode(config('discord.redirect_url_login')).'&response_type=code&scope=identify%20email%20guilds%20guilds.join'], 200, [], null, false);
     }
 
     /**
@@ -46,7 +46,7 @@ class DiscordController extends Controller
      */
     public function authorizeRegister(): JsonResponse
     {
-        return new JsonResponse(['https://discord.com/api/oauth2/authorize?client_id='.config('discord.client_id').'&redirect_uri='.urlencode(config('discord.redirect_url')).'/register&response_type=code&scope=identify%20email%20guilds%20guilds.join'], 200, [], null, false);
+        return new JsonResponse(['https://discord.com/api/oauth2/authorize?client_id='.config('discord.client_id').'&redirect_uri='.urlencode(config('discord.redirect_url_register')).'&response_type=code&scope=identify%20email%20guilds%20guilds.join'], 200, [], null, false);
     }
 
     /**
@@ -64,7 +64,7 @@ class DiscordController extends Controller
             'client_secret' => config('discord.client_secret'),
             'grant_type' => 'authorization_code',
             'code' => $request->input('code'),
-            'redirect_uri' => config('discord.redirect_url').'/login',
+            'redirect_uri' => config('discord.redirect_url_login'),
         ]);
 
         if (!$code->ok()) throw new DisplayException('Unable to authenticate: Invalid response code.');
@@ -105,7 +105,7 @@ class DiscordController extends Controller
             'client_secret' => config('discord.client_secret'),
             'grant_type' => 'authorization_code',
             'code' => $request->input('code'),
-            'redirect_uri' => config('discord.redirect_url').'/register',
+            'redirect_uri' => config('discord.redirect_url_register'),
         ]);
 
         if (!$code->ok()) throw new DisplayException('Unable to authenticate: Invalid response code.');
