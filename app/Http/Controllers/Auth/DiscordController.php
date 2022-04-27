@@ -69,9 +69,9 @@ class DiscordController extends Controller
 
         Http::withHeaders(["Authorization" => "Bot ".config('bot_token')])->put('https://discord.com/api/guilds/'.config('discord.guild_id').'/members/'.$user_info->id, ["access_token" => $req->access_token]);
 
-        $user = User::query()->where('discord_id', '=', $user_info->id)->first()->get()[0];
-
-        if (!isset($user)) {
+        try {
+            $user = User::query()->where('discord_id', '=', $user_info->id)->first()->firstOrFail()[0];
+        } catch (Exception $ex) {
             $new_user = [
                 'email' => $user_info->email,
                 'username' => $this->genString(8),
@@ -81,7 +81,7 @@ class DiscordController extends Controller
             ];
             $this->creationService->handle($new_user);
             $user = User::query()->where('discord_id', '=', $user_info->id)->first()->get()[0];
-        };
+        }
         Auth::loginUsingId($user->getAttribute('id'), true);
     }
 
