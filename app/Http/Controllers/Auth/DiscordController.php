@@ -34,7 +34,7 @@ class DiscordController extends Controller
      */
     public function login(): JsonResponse
     {
-        return new JsonResponse(['https://discord.com/api/oauth2/authorize?client_id='.config('discord.client_id').'&redirect_uri='.urlencode(config('discord.redirect_url')).'&response_type=code&scope=identify%20email%20guilds%20guilds.join'], 200, [], null, true);
+        return new JsonResponse(['https://discord.com/api/oauth2/authorize?client_id='.config('discord.client_id').'&redirect_uri='.urlencode(config('discord.redirect_url')).'&response_type=code&scope=identify%20email%20guilds%20guilds.join'], 200, [], null, false);
     }
 
     /**
@@ -50,16 +50,27 @@ class DiscordController extends Controller
             'client_secret' => config('discord.client_secret'),
             'grant_type' => 'authorization_code',
             'code' => $request->input('code'),
-            'redirect_uri' => config('redirect_url')
+            'redirect_uri' => config('discord.redirect_url')
         ]);
+
         if (!$code->ok()) throw new DisplayException('Invalid Return Code');
         $req = json_decode($code->body());
-        if (preg_match("(email|guilds|identify|guilds.join)", $req->scope) !== 1) throw new DisplayException('Invalid Authorized Scopes');
+
+        if (preg_match("(email|guilds|identify|guilds.join)", $req->scope) !== 1) {
+            throw new DisplayException('Failed to authenticate: Login scopes incorrect.');
+        }
+
         $user_info = json_decode(Http::withHeaders(["Authorization" => "Bearer ".$req->access_token])->asForm()->get('https://discord.com/api/users/@me')->body());
         $banned = Http::withHeaders(["Authorization" => "Bot ".config('bot_token')])->get('https://discord.com/api/guilds/'.config('discord.guild_id').'/bans/'.$user_info->id);
-        if ($banned->ok()) throw new DisplayException('This account has been deactivated by Nero. Please contact us for support at https://neronodes.net/discord.');
+
+        if ($banned->ok()) {
+            throw new DisplayException('This account has been deactivated by Nero. Please contact us for support at https://neronodes.net/discord.');
+        }
+
         Http::withHeaders(["Authorization" => "Bot ".config('bot_token')])->put('https://discord.com/api/guilds/'.config('discord.guild_id').'/members/'.$user_info->id, ["access_token" => $req->access_token]);
+
         $user = User::query()->where('discord_id', '=', $user_info->id)->first()->get()[0];
+
         if (!isset($user)) {
             $new_user = [
                 'email' => $user_info->email,
