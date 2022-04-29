@@ -17,7 +17,7 @@ const NewUserContainer = () => {
         <div css={tw`flex justify-center`}>
             <div css={tw`w-full sm:w-3/4 md:w-1/2 p-12 md:p-20 bg-neutral-100 rounded-lg shadow-lg text-center relative`}>
                 <h2 css={tw`mb-10 mt-2 text-neutral-900 font-bold text-4xl`}>
-                    <span role={'img'} aria-label={'hello'} css={tw`mr-1`}>👋</span>Welcome, {user.username}!
+                    <span role={'img'} aria-label={'hello'} css={tw`mr-1`}>👋</span>Welcome, {user.email}!
                 </h2>
                 <p css={tw`text-sm text-neutral-700`}>
                     Looks like it is your first time using Nero. Let&apos;s get you started
