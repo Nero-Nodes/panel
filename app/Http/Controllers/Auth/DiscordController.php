@@ -82,12 +82,14 @@ class DiscordController extends Controller
         }
 
         try {
-            $user = User::query()->where($this->getField($user_info->email), $user_info->email)->first();
+            $user = User::query()->where('email', $user_info->email)->first();
         } catch (DisplayException $e) {
             throw new DisplayException('Unable to authenticate: User does not exist. Please register first.');
         }
 
-        Auth::loginUsingId($user->id, true);
+        dd($user);
+
+        // Auth::loginUsingId($user->id, true);
     }
 
     /** 
@@ -138,10 +140,10 @@ class DiscordController extends Controller
             throw new DisplayException('Your account could not be created. Try signing in first.');
         }
 
-        $user = User::query()->where($this->getField($username), $username)->first();
+        $user = User::query()->where('username', $username)->first();
 
         dd($user);
-        // Auth::loginUsingId($request->user()->id, true);
+        // Auth::loginUsingId($user->id, true);
     }
 
     public function genString(int $length): string
