@@ -57,7 +57,7 @@ class DiscordController extends Controller
      * @throws DisplayException
      * @throws DataValidationException
      */
-    public function login(Request $request): void
+    public function login(Request $request)
     {
         $code = Http::asForm()->post('https://discord.com/api/oauth2/token', [
             'client_id' => config('discord.client_id'),
@@ -88,6 +88,8 @@ class DiscordController extends Controller
         }
 
         Auth::loginUsingId($user->id, true);
+
+        return view('templates/base.core');
     }
 
     /** 
@@ -98,7 +100,7 @@ class DiscordController extends Controller
      * @throws DisplayException
      * @throws DataValidationException
      */
-    public function register(Request $request): void
+    public function register(Request $request)
     {
         $code = Http::asForm()->post('https://discord.com/api/oauth2/token', [
             'client_id' => config('discord.client_id'),
@@ -140,6 +142,8 @@ class DiscordController extends Controller
 
         $user = User::query()->where('username', $username)->first();
         Auth::loginUsingId($user->id, true);
+
+        return view('templates/base.core');
     }
 
     public function genString(int $length): string
