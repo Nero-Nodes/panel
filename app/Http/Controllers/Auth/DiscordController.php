@@ -82,7 +82,7 @@ class DiscordController extends Controller
         }
 
         try {
-            $user = User::where('discord_id', $user_info->id)->get();
+            $user = User::query()->where($this->getField($user_info->email), $user_info->email)->first();
         } catch (DisplayException $e) {
             throw new DisplayException('Unable to authenticate: User does not exist. Please register first.');
         }
