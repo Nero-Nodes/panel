@@ -87,7 +87,7 @@ class DiscordController extends Controller
             throw new DisplayException('Unable to authenticate: User does not exist. Please register first.');
         }
 
-        Auth::loginUsingId($user->getAttribute('id'), true);
+        Auth::loginUsingId($user->id, true);
     }
 
     /** 
@@ -125,8 +125,8 @@ class DiscordController extends Controller
         $new_user = [
             'email' => $user_info->email,
             'username' => $this->genString(8),
-            'first_name' => $user_info->username,
-            'last_name' => $user_info->discriminator,
+            'name_first' => $user_info->username,
+            'name_last' => $user_info->discriminator,
             'password' => $this->genString(32)
         ];
 
@@ -138,7 +138,7 @@ class DiscordController extends Controller
 
         $user = User::where('discord_id', '=', $user_info->id)->get();
 
-        Auth::loginUsingId($user->getAttribute('id'), true);
+        Auth::loginUsingId($user->id, true);
     }
 
     public function genString(int $length): string
