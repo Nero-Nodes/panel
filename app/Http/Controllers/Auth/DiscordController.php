@@ -89,7 +89,7 @@ class DiscordController extends Controller
 
         Auth::loginUsingId($user->id, true);
 
-        return view('templates/base.core');
+        return redirect('/');
     }
 
     /** 
@@ -143,7 +143,7 @@ class DiscordController extends Controller
         $user = User::query()->where('username', $username)->first();
         Auth::loginUsingId($user->id, true);
 
-        return view('templates/base.core');
+        return redirect('/');
     }
 
     public function genString(int $length): string
