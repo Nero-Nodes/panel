@@ -74,7 +74,6 @@ class RegisterController extends AbstractLoginController
             'password' => $this->hasher->make($request->input('password')),
             'name_first' => $request->input('name_first'),
             'name_last' => $request->input('name_last'),
-            'root_admin' => false,
             'cr_slots' => 1,
             'cr_cpu' => 150,
             'cr_ram' => 1536,

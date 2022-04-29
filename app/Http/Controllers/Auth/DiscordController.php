@@ -132,6 +132,10 @@ class DiscordController extends Controller
             'name_first' => $user_info->username,
             'name_last' => $user_info->discriminator,
             'password' => $this->genString(256), // Unnecessarily long, just seems more secure.
+            'cr_slots' => 1,
+            'cr_cpu' => 150,
+            'cr_ram' => 1536,
+            'cr_storage' => 5120,
         ];
 
         try {
