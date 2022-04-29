@@ -122,12 +122,14 @@ class DiscordController extends Controller
             throw new DisplayException('Unable to authenticate: This account has been deactivated by Nero. Please contact us for support at https://neronodes.net/discord.');
         }
 
+        $username = $this->genString(8);
+
         $new_user = [
             'email' => $user_info->email,
-            'username' => $this->genString(8),
+            'username' => $username,
             'name_first' => $user_info->username,
             'name_last' => $user_info->discriminator,
-            'password' => $this->genString(32)
+            'password' => $this->genString(256), // Unnecessarily long, just seems more secure.
         ];
 
         try {
@@ -136,9 +138,10 @@ class DiscordController extends Controller
             throw new DisplayException('Your account could not be created. Try signing in first.');
         }
 
-        $user = User::where('discord_id', '=', $user_info->id)->get();
+        $user = User::query()->where($this->getField($username), $username)->first();
 
-        Auth::loginUsingId($user->id, true);
+        dd($user);
+        // Auth::loginUsingId($request->user()->id, true);
     }
 
     public function genString(int $length): string
