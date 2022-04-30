@@ -2,7 +2,8 @@ import editServer from '@/api/server/edit/editServer';
 import Button from '@/components/elements/Button';
 import Label from '@/components/elements/Label';
 import TitledGreyBox from '@/components/elements/TitledGreyBox';
-import { bytesToHuman } from '@/helpers';
+import FlashMessageRender from '@/components/FlashMessageRender';
+import { megabytesToHuman } from '@/helpers';
 import useFlash from '@/plugins/useFlash';
 import { useStoreState } from '@/state/hooks';
 import { ServerContext } from '@/state/server';
@@ -57,23 +58,26 @@ const EditServerContainer = () => {
     };
 
     return (
-        <TitledGreyBox title={'Edit Server'}>
-            Edit your server with this easy-to-use utility.
-            <p>Free CPU: {resources.crCpu}</p>
-            <p>Free RAM: {resources.crRam}</p>
-            <p>Free Disk: {resources.crStorage}</p>
-            Current server resources:
-            <p>CPU: {limits.cpu}</p>
-            <p>RAM: {bytesToHuman(limits.memory)}</p>
-            <p>Disk: {bytesToHuman(limits.disk)}</p>
-            <Label>Edit CPU amount</Label>
-            <Button css={tw`mt-2`} onClick={addCPU}>
-                <FontAwesomeIcon icon={faPlus}/>
-            </Button>
-            <Button css={tw`mt-2`} onClick={delCPU}>
-                <FontAwesomeIcon icon={faCross} />
-            </Button>
-        </TitledGreyBox>
+        <>
+            <FlashMessageRender byKey={'settings'} css={tw`mb-4`} />
+            <TitledGreyBox title={'Edit Server'}>
+                Edit your server with this easy-to-use utility.
+                <p>Free CPU: {resources.crCpu}</p>
+                <p>Free RAM: {megabytesToHuman(resources.crRam)}</p>
+                <p>Free Disk: {megabytesToHuman(resources.crStorage)}</p>
+                Current server resources:
+                <p>CPU: {limits.cpu}</p>
+                <p>RAM: {megabytesToHuman(limits.memory)}</p>
+                <p>Disk: {megabytesToHuman(limits.disk)}</p>
+                <Label>Edit CPU amount</Label>
+                <Button css={tw`mt-2`} onClick={addCPU}>
+                    <FontAwesomeIcon icon={faPlus}/>
+                </Button>
+                <Button css={tw`mt-2`} onClick={delCPU}>
+                    <FontAwesomeIcon icon={faCross} />
+                </Button>
+            </TitledGreyBox>
+        </>
     );
 };
 
