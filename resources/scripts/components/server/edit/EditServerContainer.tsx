@@ -1,22 +1,21 @@
 import editServer from '@/api/server/edit/editServer';
 import Button from '@/components/elements/Button';
-import Label from '@/components/elements/Label';
 import TitledGreyBox from '@/components/elements/TitledGreyBox';
 import FlashMessageRender from '@/components/FlashMessageRender';
 import { megabytesToHuman } from '@/helpers';
 import useFlash from '@/plugins/useFlash';
 import { useStoreState } from '@/state/hooks';
 import { ServerContext } from '@/state/server';
-import { faCross, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faHdd, faTimesCircle, faPlusCircle, faMemory, faMicrochip } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
+import { Link } from 'react-router-dom';
 import tw from 'twin.macro';
 
 const EditServerContainer = () => {
     const { addFlash, clearFlashes, clearAndAddHttpError } = useFlash();
 
     const resources = useStoreState(state => state.user.data!);
-    const limits = ServerContext.useStoreState(state => state.server.data!.limits);
     const uuid = ServerContext.useStoreState(state => state.server.data!.uuid);
 
     /**
@@ -45,7 +44,6 @@ const EditServerContainer = () => {
         clearFlashes('settings');
 
         editServer(uuid, 1, -50)
-            .then(() => console.log('Successfully removed 50% CPU.'))
             .then(() => addFlash({
                 type: 'success',
                 key: 'settings',
@@ -57,26 +55,121 @@ const EditServerContainer = () => {
             });
     };
 
+    const addRAM = () => {
+        clearFlashes('settings');
+
+        editServer(uuid, 2, 1024)
+            .then(() => addFlash({
+                type: 'success',
+                key: 'settings',
+                message: '1GB RAM added to server.',
+            }))
+            .catch(error => {
+                console.error(error);
+                clearAndAddHttpError({ key: 'settings', error });
+            });
+    };
+
+    const delRAM = () => {
+        clearFlashes('settings');
+
+        editServer(uuid, 2, -1024)
+            .then(() => addFlash({
+                type: 'success',
+                key: 'settings',
+                message: '1GB RAM removed from server.',
+            }))
+            .catch(error => {
+                console.error(error);
+                clearAndAddHttpError({ key: 'settings', error });
+            });
+    };
+
+    const addDisk = () => {
+        clearFlashes('settings');
+
+        editServer(uuid, 3, 1024)
+            .then(() => addFlash({
+                type: 'success',
+                key: 'settings',
+                message: '1GB Storage added to server.',
+            }))
+            .catch(error => {
+                console.error(error);
+                clearAndAddHttpError({ key: 'settings', error });
+            });
+    };
+
+    const delDisk = () => {
+        clearFlashes('settings');
+
+        editServer(uuid, 3, -1024)
+            .then(() => addFlash({
+                type: 'success',
+                key: 'settings',
+                message: '1GB Storage removed from server.',
+            }))
+            .catch(error => {
+                console.error(error);
+                clearAndAddHttpError({ key: 'settings', error });
+            });
+    };
+
     return (
         <>
             <FlashMessageRender byKey={'settings'} css={tw`mb-4`} />
+
             <TitledGreyBox title={'Edit Server'}>
-                Edit your server with this easy-to-use utility.
-                <p>Free CPU: {resources.crCpu}</p>
-                <p>Free RAM: {megabytesToHuman(resources.crRam)}</p>
-                <p>Free Disk: {megabytesToHuman(resources.crStorage)}</p>
-                Current server resources:
-                <p>CPU: {limits.cpu}</p>
-                <p>RAM: {megabytesToHuman(limits.memory)}</p>
-                <p>Disk: {megabytesToHuman(limits.disk)}</p>
-                <Label>Edit CPU amount</Label>
-                <Button css={tw`mt-2`} onClick={addCPU}>
-                    <FontAwesomeIcon icon={faPlus}/>
-                </Button>
-                <Button css={tw`mt-2`} onClick={delCPU}>
-                    <FontAwesomeIcon icon={faCross} />
-                </Button>
+                Edit your server with this easy-to-use utility. Resources can be added or taken away
+                from your server. You must buy more resources at the <Link to={'/store'}>Store</Link>
+                in order to add resources to your server.
             </TitledGreyBox>
+
+            <div css={tw`flex justify-center items-center p-8`}>
+                <TitledGreyBox
+                    title={'Edit CPU Limit'}
+                    icon={faMicrochip}
+                    css={tw`flex-1 lg:flex-none lg:w-1/3`}
+                >
+                    <div css={tw`flex justify-center items-center p-2`}>
+                        {resources.crCpu}% available
+                        <Button css={tw`mt-2`} onClick={addCPU}>
+                            <FontAwesomeIcon icon={faPlusCircle} /> Add 50%
+                        </Button>
+                        <Button css={tw`mt-2`} onClick={delCPU}>
+                            <FontAwesomeIcon icon={faTimesCircle} /> Remove 50%
+                        </Button>
+                    </div>
+                </TitledGreyBox>
+                <TitledGreyBox
+                    title={'Edit RAM Limit'}
+                    icon={faMemory}
+                    css={tw`flex-1 lg:flex-none lg:w-1/3 p-2`}
+                >
+                    <div css={tw`flex justify-center items-center p-2`}>
+                        {megabytesToHuman(resources.crRam)} available
+                        <Button css={tw`mt-2`} onClick={addRAM}>
+                            <FontAwesomeIcon icon={faPlusCircle} /> Add 1GB
+                        </Button>
+                        <Button css={tw`mt-2`} onClick={delRAM}>
+                            <FontAwesomeIcon icon={faTimesCircle} /> Remove 1GB
+                        </Button>
+                    </div>
+                </TitledGreyBox>
+                <TitledGreyBox
+                    title={'Edit Storage Limit'}
+                    icon={faHdd}
+                    css={tw`flex-1 lg:flex-none lg:w-1/3 p-2`}
+                >
+                    {megabytesToHuman(resources.crStorage)} available
+                    <Button css={tw`mt-2`} onClick={addDisk}>
+                        <FontAwesomeIcon icon={faPlusCircle} /> Add 1GB
+                    </Button>
+                    <Button css={tw`mt-2`} onClick={delDisk}>
+                        <FontAwesomeIcon icon={faTimesCircle} /> Remove 1GB
+                    </Button>
+                </TitledGreyBox>
+            </div>
         </>
     );
 };
