@@ -130,6 +130,7 @@ Route::group(['prefix' => '/servers/{server}', 'middleware' => [AuthenticateServ
         Route::post('/rename', 'Servers\SettingsController@rename');
         Route::post('/delete', 'Credits\StoreController@deleteServer');
         Route::post('/reinstall', 'Servers\SettingsController@reinstall');
+        Route::post('/edit', 'Servers\SettingsController@edit');
         Route::put('/docker-image', 'Servers\SettingsController@dockerImage');
     });
 });

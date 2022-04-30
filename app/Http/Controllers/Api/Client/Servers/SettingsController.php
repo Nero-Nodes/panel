@@ -5,10 +5,12 @@ namespace Pterodactyl\Http\Controllers\Api\Client\Servers;
 use Illuminate\Http\Response;
 use Pterodactyl\Models\Server;
 use Illuminate\Http\JsonResponse;
+use Pterodactyl\Services\Servers\EditServerService;
 use Pterodactyl\Repositories\Eloquent\ServerRepository;
 use Pterodactyl\Services\Servers\ReinstallServerService;
 use Pterodactyl\Http\Controllers\Api\Client\ClientApiController;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Pterodactyl\Http\Requests\Api\Client\Servers\Settings\EditServerRequest;
 use Pterodactyl\Http\Requests\Api\Client\Servers\Settings\RenameServerRequest;
 use Pterodactyl\Http\Requests\Api\Client\Servers\Settings\SetDockerImageRequest;
 use Pterodactyl\Http\Requests\Api\Client\Servers\Settings\ReinstallServerRequest;
@@ -26,16 +28,23 @@ class SettingsController extends ClientApiController
     private $reinstallServerService;
 
     /**
+     * @var \Pterodactyl\Services\Servers\EditServerService
+     */
+    private $editServerService;
+
+    /**
      * SettingsController constructor.
      */
     public function __construct(
         ServerRepository $repository,
-        ReinstallServerService $reinstallServerService
+        ReinstallServerService $reinstallServerService,
+        EditServerService $editServerService
     ) {
         parent::__construct();
 
         $this->repository = $repository;
         $this->reinstallServerService = $reinstallServerService;
+        $this->editServerService = $editServerService;
     }
 
     /**
@@ -83,6 +92,24 @@ class SettingsController extends ClientApiController
         }
 
         $server->forceFill(['image' => $request->input('docker_image')])->saveOrFail();
+
+        return new JsonResponse([], Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * Edits the server's limits and resources.
+     * 
+     * @throws \Throwable
+     */
+    public function edit(EditServerRequest $request, Server $server): JsonResponse
+    {
+        /**
+         * RESOURCES TO INTEGER
+         * CPU => 1
+         * RAM => 2
+         * DISK = 3
+         */
+        $this->editServerService->handle($request, $server);
 
         return new JsonResponse([], Response::HTTP_NO_CONTENT);
     }
