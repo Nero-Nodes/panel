@@ -119,7 +119,7 @@ const EditServerContainer = () => {
         <>
             <FlashMessageRender byKey={'settings'} css={tw`mb-4`} />
 
-            <TitledGreyBox title={'Edit Server'}>
+            <TitledGreyBox title={'Edit Server'} css={tw`p-8`}>
                 Edit your server with this easy-to-use utility. Resources can be added or taken away
                 from your server. You must buy more resources at the <Link to={'/store'}>Store</Link>
                 in order to add resources to your server.
@@ -131,8 +131,8 @@ const EditServerContainer = () => {
                     icon={faMicrochip}
                     css={tw`flex-1 lg:flex-none lg:w-1/3`}
                 >
-                    <div css={tw`flex justify-center items-center p-2`}>
-                        {resources.crCpu}% available
+                    {resources.crCpu}% available
+                    <div css={tw`flex justify-center items-center`}>
                         <Button css={tw`mt-2`} onClick={addCPU}>
                             <FontAwesomeIcon icon={faPlusCircle} /> Add 50%
                         </Button>
@@ -144,10 +144,10 @@ const EditServerContainer = () => {
                 <TitledGreyBox
                     title={'Edit RAM Limit'}
                     icon={faMemory}
-                    css={tw`flex-1 lg:flex-none lg:w-1/3 p-2`}
+                    css={tw`flex-1 lg:flex-none lg:w-1/3 ml-4`}
                 >
-                    <div css={tw`flex justify-center items-center p-2`}>
-                        {megabytesToHuman(resources.crRam)} available
+                    {megabytesToHuman(resources.crRam)} available
+                    <div css={tw`flex justify-center items-center`}>
                         <Button css={tw`mt-2`} onClick={addRAM}>
                             <FontAwesomeIcon icon={faPlusCircle} /> Add 1GB
                         </Button>
@@ -159,7 +159,7 @@ const EditServerContainer = () => {
                 <TitledGreyBox
                     title={'Edit Storage Limit'}
                     icon={faHdd}
-                    css={tw`flex-1 lg:flex-none lg:w-1/3 p-2`}
+                    css={tw`flex-1 lg:flex-none lg:w-1/3 ml-4`}
                 >
                     {megabytesToHuman(resources.crStorage)} available
                     <Button css={tw`mt-2`} onClick={addDisk}>

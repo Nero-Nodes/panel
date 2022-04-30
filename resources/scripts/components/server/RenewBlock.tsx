@@ -43,7 +43,7 @@ const RenewBlock = () => {
                 {renewable === '1' ?
                     <>
                         <p css={tw`text-sm mt-2`}>
-                            Renewal Cost: {renewal} coins
+                            Renewal Cost: {renewal} credits
                         </p>
                         <p css={tw`text-xs mt-2`}>
                             Renewing your server means that it will continue to run 24/7.
