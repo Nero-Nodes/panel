@@ -56,6 +56,7 @@ import { ApplicationStore } from '@/state';
 import useWindowDimensions from '@/plugins/useWindowDimensions';
 import ProgressBar from '@/components/elements/ProgressBar';
 import SearchModal from '@/components/dashboard/search/SearchModal';
+import EditServerContainer from '@/components/server/edit/EditServerContainer';
 
 const ConflictStateRenderer = () => {
     const status = ServerContext.useStoreState(state => state.server.data?.status || null);
@@ -171,8 +172,10 @@ const ServerRouter = ({ match, location }: RouteComponentProps<{ id: string }>) 
                                                             <Sidebar.Section>Server - Startup</Sidebar.Section>
                                                             : location.pathname.startsWith(`/server/${id}/settings`) ?
                                                                 <Sidebar.Section>Server - Settings</Sidebar.Section>
-                                                                :
-                                                                <Spinner size={'small'} centered isBlue/>
+                                                                : location.pathname.startsWith(`/server/${id}/edit`) ?
+                                                                    <Sidebar.Section>Server - Settings</Sidebar.Section>
+                                                                    :
+                                                                    <Spinner size={'small'} centered isBlue/>
 
                         }
                         <NavLink to={'/'} exact>
@@ -341,6 +344,7 @@ const ServerRouter = ({ match, location }: RouteComponentProps<{ id: string }>) 
                                             </Route>
                                             <Route path={`${match.path}/startup`} component={StartupContainer} exact/>
                                             <Route path={`${match.path}/settings`} component={SettingsContainer} exact/>
+                                            <Route path={`${match.path}/edit`} component={EditServerContainer} exact/>
                                             <Route path={'*'} component={NotFound}/>
                                         </Switch>
                                     </TransitionRouter>

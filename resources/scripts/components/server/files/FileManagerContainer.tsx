@@ -16,10 +16,15 @@ import useFileManagerSwr from '@/plugins/useFileManagerSwr';
 import MassActionsBar from '@/components/server/files/MassActionsBar';
 import UploadButton from '@/components/server/files/UploadButton';
 import ServerContentBlock from '@/components/elements/ServerContentBlock';
-import { useStoreActions } from '@/state/hooks';
+import { useStoreActions, useStoreState } from '@/state/hooks';
 import ErrorBoundary from '@/components/elements/ErrorBoundary';
 import { FileActionCheckbox } from '@/components/server/files/SelectFileCheckbox';
-import { hashToPath } from '@/helpers';
+import { formatIp, hashToPath } from '@/helpers';
+import Input from '@/components/elements/Input';
+import Label from '@/components/elements/Label';
+import TitledGreyBox from '@/components/elements/TitledGreyBox';
+import CopyOnClick from '@/components/elements/CopyOnClick';
+import isEqual from 'react-fast-compare';
 
 const sortFiles = (files: FileObject[], searchString: string): FileObject[] => {
     const sortedFiles: FileObject[] = files.sort((a, b) => a.name.localeCompare(b.name)).sort((a, b) => a.isFile === b.isFile ? 0 : (a.isFile ? 1 : -1));
@@ -33,6 +38,9 @@ export default () => {
     const directory = ServerContext.useStoreState(state => state.files.directory);
     const clearFlashes = useStoreActions(actions => actions.flashes.clearFlashes);
     const setDirectory = ServerContext.useStoreActions(actions => actions.files.setDirectory);
+
+    const username = useStoreState(state => state.user.data!.username);
+    const sftp = ServerContext.useStoreState(state => state.server.data!.sftpDetails, isEqual);
 
     const setSelectedFiles = ServerContext.useStoreActions(actions => actions.files.setSelectedFiles);
     const selectedFilesLength = ServerContext.useStoreState(state => state.files.selectedFiles.length);
@@ -137,6 +145,30 @@ export default () => {
                         }
                     </>
             }
+            <Can action={'file.sftp'}>
+                <TitledGreyBox title={'SFTP Details'} css={tw`mt-6 md:mt-4`}>
+                    <div>
+                        <Label>Server Address</Label>
+                        <CopyOnClick text={`sftp://${formatIp(sftp.ip)}:${sftp.port}`}>
+                            <Input
+                                type={'text'}
+                                value={`sftp://${formatIp(sftp.ip)}:${sftp.port}`}
+                                readOnly
+                            />
+                        </CopyOnClick>
+                    </div>
+                    <div css={tw`mt-6`}>
+                        <Label>Username</Label>
+                        <CopyOnClick text={`${username}.${id}`}>
+                            <Input
+                                type={'text'}
+                                value={`${username}.${id}`}
+                                readOnly
+                            />
+                        </CopyOnClick>
+                    </div>
+                </TitledGreyBox>
+            </Can>
         </ServerContentBlock>
     );
 };
