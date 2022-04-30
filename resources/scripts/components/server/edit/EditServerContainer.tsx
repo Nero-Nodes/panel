@@ -133,10 +133,10 @@ const EditServerContainer = () => {
                 >
                     {resources.crCpu}% available
                     <div css={tw`flex justify-center items-center`}>
-                        <Button css={tw`mt-2`} onClick={addCPU}>
+                        <Button css={tw`mt-2 p-1`} onClick={addCPU}>
                             <FontAwesomeIcon icon={faPlusCircle} /> Add 50%
                         </Button>
-                        <Button css={tw`mt-2`} onClick={delCPU}>
+                        <Button css={tw`mt-2 p-1`} onClick={delCPU}>
                             <FontAwesomeIcon icon={faTimesCircle} /> Remove 50%
                         </Button>
                     </div>
@@ -148,10 +148,10 @@ const EditServerContainer = () => {
                 >
                     {megabytesToHuman(resources.crRam)} available
                     <div css={tw`flex justify-center items-center`}>
-                        <Button css={tw`mt-2`} onClick={addRAM}>
+                        <Button css={tw`mt-2 p-1`} onClick={addRAM}>
                             <FontAwesomeIcon icon={faPlusCircle} /> Add 1GB
                         </Button>
-                        <Button css={tw`mt-2`} onClick={delRAM}>
+                        <Button css={tw`mt-2 p-1`} onClick={delRAM}>
                             <FontAwesomeIcon icon={faTimesCircle} /> Remove 1GB
                         </Button>
                     </div>
@@ -162,12 +162,14 @@ const EditServerContainer = () => {
                     css={tw`flex-1 lg:flex-none lg:w-1/3 ml-4`}
                 >
                     {megabytesToHuman(resources.crStorage)} available
-                    <Button css={tw`mt-2`} onClick={addDisk}>
-                        <FontAwesomeIcon icon={faPlusCircle} /> Add 1GB
-                    </Button>
-                    <Button css={tw`mt-2`} onClick={delDisk}>
-                        <FontAwesomeIcon icon={faTimesCircle} /> Remove 1GB
-                    </Button>
+                    <div css={tw`flex justify-center items-center`}>
+                        <Button css={tw`mt-2 p-1`} onClick={addDisk}>
+                            <FontAwesomeIcon icon={faPlusCircle} /> Add 1GB
+                        </Button>
+                        <Button css={tw`mt-2 p-1`} onClick={delDisk}>
+                            <FontAwesomeIcon icon={faTimesCircle} /> Remove 1GB
+                        </Button>
+                    </div>
                 </TitledGreyBox>
             </div>
         </>
