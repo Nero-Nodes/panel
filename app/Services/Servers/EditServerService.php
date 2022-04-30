@@ -3,6 +3,7 @@
 namespace Pterodactyl\Services\Servers;
 
 use Pterodactyl\Models\Server;
+use Pterodactyl\Exceptions\DisplayException;
 
 class EditServerService
 {
@@ -11,6 +12,8 @@ class EditServerService
      */
     public function handle(array $request, Server $server)
     {
+        return throw new DisplayException('Resource: '.$request['resource'].', Value: '.$request['value'].', User: '.$request->user());
+
         $resource = $request['resource'];
         $value = $request['value'];
         $user = $request->user();

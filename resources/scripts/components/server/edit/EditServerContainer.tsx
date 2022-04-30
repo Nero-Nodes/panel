@@ -3,6 +3,7 @@ import Button from '@/components/elements/Button';
 import Label from '@/components/elements/Label';
 import TitledGreyBox from '@/components/elements/TitledGreyBox';
 import { bytesToHuman } from '@/helpers';
+import useFlash from '@/plugins/useFlash';
 import { useStoreState } from '@/state/hooks';
 import { ServerContext } from '@/state/server';
 import { faCross, faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -11,6 +12,8 @@ import React from 'react';
 import tw from 'twin.macro';
 
 const EditServerContainer = () => {
+    const { addFlash, clearFlashes, clearAndAddHttpError } = useFlash();
+
     const resources = useStoreState(state => state.user.data!);
     const limits = ServerContext.useStoreState(state => state.server.data!.limits);
     const uuid = ServerContext.useStoreState(state => state.server.data!.uuid);
@@ -22,15 +25,35 @@ const EditServerContainer = () => {
      * DISK = 3
      */
     const addCPU = () => {
+        clearFlashes('settings');
+
         editServer(uuid, 1, 50)
             .then(() => console.log('Successfully added 50% CPU.'))
-            .catch((error) => console.log(error));
+            .then(() => addFlash({
+                type: 'success',
+                key: 'settings',
+                message: '50% CPU added to server.',
+            }))
+            .catch(error => {
+                console.error(error);
+                clearAndAddHttpError({ key: 'settings', error });
+            });
     };
 
     const delCPU = () => {
+        clearFlashes('settings');
+
         editServer(uuid, 1, -50)
             .then(() => console.log('Successfully removed 50% CPU.'))
-            .catch((error) => console.log(error));
+            .then(() => addFlash({
+                type: 'success',
+                key: 'settings',
+                message: '50% CPU removed from server.',
+            }))
+            .catch(error => {
+                console.error(error);
+                clearAndAddHttpError({ key: 'settings', error });
+            });
     };
 
     return (
