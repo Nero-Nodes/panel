@@ -22,7 +22,7 @@ class EditServerService
                 'cpu' => $server->cpu + $value,
             ]);
 
-            // Then, we'll chanhge the user's resource balance.
+            // Then, we'll change the user's resource balance.
             $user->update([
                 'cr_cpu' => $user->cr_cpu - $value,
             ]);
@@ -34,7 +34,7 @@ class EditServerService
                 'memory' => $server->memory + $value,
             ]);
 
-            // Then, we'll chanhge the user's resource balance.
+            // Then, we'll change the user's resource balance.
             $user->update([
                 'cr_ram' => $user->cr_ram - $value,
             ]);
@@ -46,7 +46,7 @@ class EditServerService
                 'disk' => $server->disk + $value,
             ]);
 
-            // Then, we'll chanhge the user's resource balance.
+            // Then, we'll change the user's resource balance.
             $user->update([
                 'cr_storage' => $user->cr_storage - $value,
             ]);
