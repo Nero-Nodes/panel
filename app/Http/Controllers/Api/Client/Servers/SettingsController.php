@@ -2,6 +2,7 @@
 
 namespace Pterodactyl\Http\Controllers\Api\Client\Servers;
 
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Pterodactyl\Models\Server;
 use Illuminate\Http\JsonResponse;
@@ -10,7 +11,6 @@ use Pterodactyl\Repositories\Eloquent\ServerRepository;
 use Pterodactyl\Services\Servers\ReinstallServerService;
 use Pterodactyl\Http\Controllers\Api\Client\ClientApiController;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Pterodactyl\Http\Requests\Api\Client\Servers\Settings\EditServerRequest;
 use Pterodactyl\Http\Requests\Api\Client\Servers\Settings\RenameServerRequest;
 use Pterodactyl\Http\Requests\Api\Client\Servers\Settings\SetDockerImageRequest;
 use Pterodactyl\Http\Requests\Api\Client\Servers\Settings\ReinstallServerRequest;
@@ -101,7 +101,7 @@ class SettingsController extends ClientApiController
      * 
      * @throws \Throwable
      */
-    public function edit(EditServerRequest $request, Server $server): JsonResponse
+    public function edit(Request $request, Server $server): JsonResponse
     {
         /**
          * RESOURCES TO INTEGER
