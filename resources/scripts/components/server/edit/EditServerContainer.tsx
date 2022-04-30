@@ -120,7 +120,7 @@ const EditServerContainer = () => {
             <FlashMessageRender byKey={'settings'} css={tw`mb-4`} />
             <TitledGreyBox title={'Edit Server'} css={tw`m-8`}>
                 Edit your server with this easy-to-use utility. Resources can be added or taken away
-                from your server. You must buy more resources at the <Link to={'/store'}>Store</Link>
+                from your server. You must buy more resources at the <Link to={'/store'} css={tw`text-blue-500`}>Store </Link>
                 in order to add resources to your server.
             </TitledGreyBox>
             <div css={tw`flex justify-center items-center p-8`}>
