@@ -2,6 +2,7 @@
 
 namespace Pterodactyl\Services\Servers;
 
+use Illuminate\Http\Request;
 use Pterodactyl\Models\Server;
 use Pterodactyl\Exceptions\DisplayException;
 
@@ -10,7 +11,7 @@ class EditServerService
     /**
      * Updates the requested instance with new limits.
      */
-    public function handle(array $request, Server $server)
+    public function handle(Request $request, Server $server)
     {
         $resource = $request['resource'];
         $value = $request['value'];
