@@ -34,7 +34,7 @@ class DiscordController extends Controller
      * 
      * @return JsonResponse
      */
-    public function authorize(): JsonResponse
+    public function oauth(): JsonResponse
     {
         return new JsonResponse([
             'https://discord.com/api/oauth2/authorize?client_id='
@@ -74,7 +74,7 @@ class DiscordController extends Controller
 
         if (User::where('email', $user_info->email)->exists()) {
             $user = User::query()->where('email', $user_info->email)->first();
-            return Auth::loginUsingId($user->id, true);
+            Auth::loginUsingId($user->id, true);
         } else {
             $username = $this->genString(8);
             $new_user = [
@@ -94,7 +94,7 @@ class DiscordController extends Controller
             } catch (Exception $e) { /* do nothing */ }
 
             $user = User::where('username', $username)->first();
-            return Auth::loginUsingId($user->id, true);
+            Auth::loginUsingId($user->id, true);
         }
     }
 

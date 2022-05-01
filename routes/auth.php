@@ -11,7 +11,7 @@
 Route::group(['middleware' => 'guest'], function () {
     Route::get('/login', 'LoginController@index')->name('auth.welcome');
 
-    Route::post('/discord/login', 'DiscordController@authorize')->name('auth.discord.login');
+    Route::post('/discord/login', 'DiscordController@oauth')->name('auth.discord.login');
     Route::get('/discord/callback', 'DiscordController@authenticate')->name('auth.discord.callback');
 
     // These routes are defined so that we can continue to reference them programatically.
