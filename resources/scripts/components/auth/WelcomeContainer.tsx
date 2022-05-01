@@ -4,7 +4,7 @@ import Button from '@/components/elements/Button';
 import useFlash from '@/plugins/useFlash';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import discordLogin from '@/api/auth/discordLogin';
-import { faAt, faCommentDots } from '@fortawesome/free-solid-svg-icons';
+import { faUserLock, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import WelcomeFormContainer from '@/components/auth/WelcomeFormContainer';
 import discordRegister from '@/api/auth/discordRegister';
@@ -52,27 +52,21 @@ const WelcomeContainer = () => {
     return (
         <WelcomeFormContainer css={tw`w-full flex`}>
             <div css={tw`mt-6`}>
+                <Button type={'button'} size={'xlarge'} color={'green'} onClick={() => register()} disabled={loading}>
+                    <FontAwesomeIcon icon={faUserPlus}/> Sign Up
+                </Button>
+            </div>
+            <div css={tw`mt-6`}>
                 <Button type={'button'} size={'xlarge'} onClick={() => login()} disabled={loading}>
-                    <FontAwesomeIcon icon={faCommentDots}/> Login with Discord
+                    <FontAwesomeIcon icon={faUserLock}/> Log In
                 </Button>
             </div>
-            <div css={tw`mt-6`}>
-                <Button type={'button'} size={'xlarge'} onClick={() => register()} disabled={loading}>
-                    <FontAwesomeIcon icon={faCommentDots}/> Signup with Discord
-                </Button>
-            </div>
-            <div css={tw`mt-12`}>
-                <Link to={'/auth/login/email'}>
-                    <Button size={'xlarge'}>
-                        <FontAwesomeIcon icon={faAt}/> Login with Email
-                    </Button>
-                </Link>
-            </div>
-            <div css={tw`mt-6`}>
-                <Link to={'/auth/register'}>
-                    <Button size={'xlarge'}>
-                        <FontAwesomeIcon icon={faAt}/> Signup with Email
-                    </Button>
+            <div css={tw`mt-6 text-center`}>
+                <Link
+                    to={'/auth/login/email'}
+                    css={tw`text-xs text-neutral-500 tracking-wide no-underline uppercase hover:text-neutral-600`}
+                >
+                    Login with Email
                 </Link>
             </div>
         </WelcomeFormContainer>
