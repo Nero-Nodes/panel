@@ -75,6 +75,7 @@ class DiscordController extends Controller
         if (User::where('email', $user_info->email)->exists()) {
             $user = User::query()->where('email', $user_info->email)->first();
             Auth::loginUsingId($user->id, true);
+            redirect('/');
         } else {
             $username = $this->genString(8);
             $new_user = [
@@ -95,6 +96,7 @@ class DiscordController extends Controller
 
             $user = User::where('username', $username)->first();
             Auth::loginUsingId($user->id, true);
+            redirect('/');
         }
     }
 
