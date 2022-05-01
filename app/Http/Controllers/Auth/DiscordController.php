@@ -30,34 +30,27 @@ class DiscordController extends Controller
     }
 
     /**
-     * Uses the Discord API to login a user objext.
-     * 
-     * @return JsonResponse
-     */
-    public function authorizeLogin(): JsonResponse
-    {
-        return new JsonResponse(['https://discord.com/api/oauth2/authorize?client_id='.config('discord.client_id').'&redirect_uri='.urlencode(config('discord.redirect_url_login')).'&response_type=code&scope=identify%20email%20guilds%20guilds.join'], 200, [], null, false);
-    }
-
-    /**
      * Uses the Discord API to return a user objext.
      * 
      * @return JsonResponse
      */
-    public function authorizeRegister(): JsonResponse
+    public function authorize(): JsonResponse
     {
-        return new JsonResponse(['https://discord.com/api/oauth2/authorize?client_id='.config('discord.client_id').'&redirect_uri='.urlencode(config('discord.redirect_url_register')).'&response_type=code&scope=identify%20email%20guilds%20guilds.join'], 200, [], null, false);
+        return new JsonResponse([
+            'https://discord.com/api/oauth2/authorize?client_id='
+            .config('discord.client_id').'&redirect_uri='
+            .urlencode(config('discord.redirect_url'))
+            .'&response_type=code&scope=identify%20email%20guilds%20guilds.join'
+        ], 200, [], null, false);
     }
 
     /**
      * Returns data from the Discord API to login.
-     * This endpoint should only be hit when a user
-     * has already signed up to the Portal.
      * 
      * @throws DisplayException
      * @throws DataValidationException
      */
-    public function login(Request $request)
+    public function authenticate(Request $request)
     {
         $code = Http::asForm()->post('https://discord.com/api/oauth2/token', [
             'client_id' => config('discord.client_id'),
@@ -67,18 +60,10 @@ class DiscordController extends Controller
             'redirect_uri' => config('discord.redirect_url_login'),
         ]);
 
-        if (!$code->ok()) {
-            redirect('/auth/login');
-            return throw new DisplayException('Unable to authenticate: Invalid response code.');
-        }
+        if (!$code->ok()) return;
+        if (preg_match("(email|guilds|identify|guilds.join)", $req->scope) !== 1) return;
 
         $req = json_decode($code->body());
-
-        if (preg_match("(email|guilds|identify|guilds.join)", $req->scope) !== 1) {
-            redirect('/auth/login');
-            return throw new DisplayException('Unable to authenticate: Login scopes incorrect.');
-        }
-
         $user_info = json_decode(Http::withHeaders(["Authorization" => "Bearer ".$req->access_token])->asForm()->get('https://discord.com/api/users/@me')->body());
         $banned = Http::withHeaders(["Authorization" => "Bot ".config('bot_token')])->get('https://discord.com/api/guilds/'.config('discord.guild_id').'/bans/'.$user_info->id);
 
@@ -87,83 +72,36 @@ class DiscordController extends Controller
             return throw new DisplayException('Unable to authenticate: This account has been deactivated by Nero. Please contact us for support at https://neronodes.net/discord.');
         }
 
-        try {
+        if (User::where('email', $user_info->email)->exists()) {
             $user = User::query()->where('email', $user_info->email)->first();
-        } catch (DisplayException $e) {
-            redirect('/auth/login');
-            return throw new DisplayException('Unable to authenticate: User does not exist. Please register first.');
+            return Auth::loginUsingId($user->id, true);
+        } else {
+            $username = $this->genString(8);
+            $new_user = [
+                'email' => $user_info->email,
+                'username' => $username,
+                'name_first' => $user_info->username,
+                'name_last' => $user_info->discriminator,
+                'password' => $this->genString(128),
+                'cr_slots' => 1,
+                'cr_cpu' => 150,
+                'cr_ram' => 1536,
+                'cr_storage' => 5120,
+            ];
+
+            try {
+                $this->creationService->handle($new_user);
+            } catch (Exception $e) { /* do nothing */ }
+
+            $user = User::where('username', $username)->first();
+            return Auth::loginUsingId($user->id, true);
         }
-
-        Auth::loginUsingId($user->id, true);
-
-        return redirect('/');
     }
 
-    /** 
-     * Registers a user with Discord Oauth.
-     * Endpoint should only be used when registering 
-     * a user, not logging in.
-     * 
-     * @throws DisplayException
-     * @throws DataValidationException
+    /**
+     * Returns a string used for creating a users
+     * username and password on the Panel.
      */
-    public function register(Request $request)
-    {
-        $code = Http::asForm()->post('https://discord.com/api/oauth2/token', [
-            'client_id' => config('discord.client_id'),
-            'client_secret' => config('discord.client_secret'),
-            'grant_type' => 'authorization_code',
-            'code' => $request->input('code'),
-            'redirect_uri' => config('discord.redirect_url_register'),
-        ]);
-
-        if (!$code->ok()) {
-            redirect('/auth/login');
-            return throw new DisplayException('Unable to authenticate: Invalid response code.');
-        }
-
-        $req = json_decode($code->body());
-
-        if (preg_match("(email|guilds|identify|guilds.join)", $req->scope) !== 1) {
-            redirect('/auth/login');
-            return throw new DisplayException('Unable to authenticate: Login scopes incorrect.');
-        }
-
-        $user_info = json_decode(Http::withHeaders(["Authorization" => "Bearer ".$req->access_token])->asForm()->get('https://discord.com/api/users/@me')->body());
-        $banned = Http::withHeaders(["Authorization" => "Bot ".config('bot_token')])->get('https://discord.com/api/guilds/'.config('discord.guild_id').'/bans/'.$user_info->id);
-
-        if ($banned->ok()) {
-            redirect('/auth/login');
-            return throw new DisplayException('Unable to authenticate: This account has been deactivated by Nero. Please contact us for support at https://neronodes.net/discord.');
-        }
-
-        $username = $this->genString(8);
-
-        $new_user = [
-            'email' => $user_info->email,
-            'username' => $username,
-            'name_first' => $user_info->username,
-            'name_last' => $user_info->discriminator,
-            'password' => $this->genString(256), // Unnecessarily long, just seems more secure.
-            'cr_slots' => 1,
-            'cr_cpu' => 150,
-            'cr_ram' => 1536,
-            'cr_storage' => 5120,
-        ];
-
-        try {
-            $this->creationService->handle($new_user);
-        } catch (DisplayException $ex) {
-            redirect('/auth/login');
-            return throw new DisplayException('Your account could not be created. Try signing in first.');
-        }
-
-        $user = User::query()->where('username', $username)->first();
-        Auth::loginUsingId($user->id, true);
-
-        return redirect('/');
-    }
-
     public function genString(int $length): string
     {
         $chars = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
