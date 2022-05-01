@@ -12,7 +12,6 @@ import ErrorBoundary from '@/components/elements/ErrorBoundary';
 import Spinner from '@/components/elements/Spinner';
 import StatBars from './StatBars';
 import RenewBlock from './RenewBlock';
-import RenewalSuspended from '../elements/RenewalSuspended';
 
 export type PowerAction = 'start' | 'stop' | 'restart' | 'kill';
 
@@ -22,72 +21,64 @@ const ServerConsole = () => {
     const isInstalling = ServerContext.useStoreState(state => state.server.data!.isInstalling);
     const isTransferring = ServerContext.useStoreState(state => state.server.data!.isTransferring);
     const eggFeatures = ServerContext.useStoreState(state => state.server.data!.eggFeatures, isEqual);
-    const renewal = ServerContext.useStoreState(state => state.server.data!.renewal);
-    const renewable = ServerContext.useStoreState(state => state.server.data!.renewable);
 
     return (
-        <>
-            {renewal < 1 && renewable === '1' ?
-                <RenewalSuspended/>
-                :
-                <ServerContentBlock title={'Console'} css={tw`flex flex-col md:flex-row md:space-y-0`}>
-                    <div css={tw`w-full md:w-3/4 mt-4 md:mt-0 md:pr-4`}>
-                        <Spinner.Suspense>
-                            <ErrorBoundary>
-                                <ChunkedConsole/>
-                            </ErrorBoundary>
-                        </Spinner.Suspense>
-                        <React.Suspense fallback={null}>
-                            {eggFeatures.includes('eula') && <EulaModalFeature/>}
-                            {eggFeatures.includes('java_version') && <JavaVersionModalFeature/>}
-                            {eggFeatures.includes('gsl_token') && <GSLTokenModalFeature/>}
-                            {eggFeatures.includes('pid_limit') && <PIDLimitModalFeature/>}
-                        </React.Suspense>
+        <ServerContentBlock title={'Console'} css={tw`flex flex-col md:flex-row md:space-y-0`}>
+            <div css={tw`w-full md:w-3/4 mt-4 md:mt-0 md:pr-4`}>
+                <Spinner.Suspense>
+                    <ErrorBoundary>
+                        <ChunkedConsole/>
+                    </ErrorBoundary>
+                </Spinner.Suspense>
+                <React.Suspense fallback={null}>
+                    {eggFeatures.includes('eula') && <EulaModalFeature/>}
+                    {eggFeatures.includes('java_version') && <JavaVersionModalFeature/>}
+                    {eggFeatures.includes('gsl_token') && <GSLTokenModalFeature/>}
+                    {eggFeatures.includes('pid_limit') && <PIDLimitModalFeature/>}
+                </React.Suspense>
+            </div>
+            <div css={tw`w-full md:w-1/4 flex flex-col space-y-6`}>
+                {isInstalling ?
+                    <div css={tw`rounded bg-yellow-500 p-3`}>
+                        <ContentContainer>
+                            <p css={tw`text-sm text-yellow-900`}>
+                                This server is currently running its installation process and most actions are
+                                unavailable.
+                            </p>
+                        </ContentContainer>
                     </div>
-                    <div css={tw`w-full md:w-1/4 flex flex-col space-y-6`}>
-                        {isInstalling ?
-                            <div css={tw`rounded bg-yellow-500 p-3`}>
-                                <ContentContainer>
-                                    <p css={tw`text-sm text-yellow-900`}>
-                                    This server is currently running its installation process and most actions are
-                                    unavailable.
-                                    </p>
-                                </ContentContainer>
-                            </div>
-                            :
-                            isTransferring ?
-                                <div css={tw`rounded bg-yellow-500 p-3`}>
-                                    <ContentContainer>
-                                        <p css={tw`text-sm text-yellow-900`}>
-                                        This server is currently being transferred to another node and all actions
-                                        are unavailable.
-                                        </p>
-                                    </ContentContainer>
-                                </div>
-                                :
-                                false
-                        }
-                        <Spinner.Suspense>
-                            <Can action={[ 'control.start', 'control.stop', 'control.restart' ]} matchAny>
-                                <PowerControls/>
-                            </Can>
-                            <StatBars/>
-                            <ServerDetailsBlock/>
-                        </Spinner.Suspense>
-                        <Spinner.Suspense>
-                            <RenewBlock/>
-                        </Spinner.Suspense>
-                        <React.Suspense fallback={null}>
-                            {eggFeatures.includes('eula') && <EulaModalFeature/>}
-                            {eggFeatures.includes('java_version') && <JavaVersionModalFeature/>}
-                            {eggFeatures.includes('gsl_token') && <GSLTokenModalFeature/>}
-                            {eggFeatures.includes('pid_limit') && <PIDLimitModalFeature/>}
-                            {eggFeatures.includes('steam_disk_space') && <SteamDiskSpaceFeature/>}
-                        </React.Suspense>
-                    </div>
-                </ServerContentBlock>
-            }
-        </>
+                    :
+                    isTransferring ?
+                        <div css={tw`rounded bg-yellow-500 p-3`}>
+                            <ContentContainer>
+                                <p css={tw`text-sm text-yellow-900`}>
+                                    This server is currently being transferred to another node and all actions
+                                    are unavailable.
+                                </p>
+                            </ContentContainer>
+                        </div>
+                        :
+                        false
+                }
+                <Spinner.Suspense>
+                    <Can action={[ 'control.start', 'control.stop', 'control.restart' ]} matchAny>
+                        <PowerControls/>
+                    </Can>
+                    <StatBars/>
+                    <ServerDetailsBlock/>
+                </Spinner.Suspense>
+                <Spinner.Suspense>
+                    <RenewBlock/>
+                </Spinner.Suspense>
+                <React.Suspense fallback={null}>
+                    {eggFeatures.includes('eula') && <EulaModalFeature/>}
+                    {eggFeatures.includes('java_version') && <JavaVersionModalFeature/>}
+                    {eggFeatures.includes('gsl_token') && <GSLTokenModalFeature/>}
+                    {eggFeatures.includes('pid_limit') && <PIDLimitModalFeature/>}
+                    {eggFeatures.includes('steam_disk_space') && <SteamDiskSpaceFeature/>}
+                </React.Suspense>
+            </div>
+        </ServerContentBlock>
     );
 };
 

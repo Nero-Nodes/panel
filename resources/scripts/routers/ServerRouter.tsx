@@ -50,13 +50,13 @@ import {
 import RequireServerPermission from '@/hoc/RequireServerPermission';
 import ServerInstallSvg from '@/assets/images/server_installing.svg';
 import ServerRestoreSvg from '@/assets/images/server_restore.svg';
-import ServerErrorSvg from '@/assets/images/server_error.svg';
 import tw from 'twin.macro';
 import { ApplicationStore } from '@/state';
 import useWindowDimensions from '@/plugins/useWindowDimensions';
 import ProgressBar from '@/components/elements/ProgressBar';
 import SearchModal from '@/components/dashboard/search/SearchModal';
 import EditServerContainer from '@/components/server/edit/EditServerContainer';
+import RenewalSuspended from '@/components/elements/RenewalSuspended';
 
 const ConflictStateRenderer = () => {
     const status = ServerContext.useStoreState(state => state.server.data?.status || null);
@@ -71,11 +71,7 @@ const ConflictStateRenderer = () => {
             />
             :
             status === 'suspended' ?
-                <ScreenBlock
-                    title={'Server Suspended'}
-                    image={ServerErrorSvg}
-                    message={'This server is suspended and cannot be accessed.'}
-                />
+                <RenewalSuspended/>
                 :
                 <ScreenBlock
                     title={isTransferring ? 'Transferring' : 'Restoring from Backup'}
