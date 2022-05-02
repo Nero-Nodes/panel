@@ -57,7 +57,7 @@ class DiscordController extends Controller
             'client_secret' => config('discord.client_secret'),
             'grant_type' => 'authorization_code',
             'code' => $request->input('code'),
-            'redirect_uri' => config('discord.redirect_url_login'),
+            'redirect_uri' => config('discord.redirect_url'),
         ]);
 
         if (!$code->ok()) return;
