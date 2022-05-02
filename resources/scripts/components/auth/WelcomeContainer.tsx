@@ -30,10 +30,13 @@ const WelcomeContainer = () => {
 
     return (
         <WelcomeFormContainer css={tw`w-full flex`}>
-            <div css={tw`m-auto`}>
-                <Button type={'button'} size={'xlarge'} onClick={() => login()} disabled={loading}>
-                    <FontAwesomeIcon icon={faUserLock}/> Log In
-                </Button>
+            <div css={tw`flex flex-col items-center justify-center w-full md:h-full md:pt-4`}>
+                <h3 css={tw`font-sans text-2xl text-center text-neutral-500 font-normal`}>Please sign in.</h3>
+                <div css={tw`mt-6 md:mt-auto`}>
+                    <Button type={'button'} size={'xlarge'} onClick={() => login()} disabled={loading}>
+                        <FontAwesomeIcon icon={faUserLock}/> Log In
+                    </Button>
+                </div>
                 <div css={tw`mt-6 text-center`}>
                     <Link
                         to={'/auth/login/email'}
