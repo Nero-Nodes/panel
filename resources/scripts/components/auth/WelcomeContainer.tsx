@@ -30,18 +30,18 @@ const WelcomeContainer = () => {
 
     return (
         <WelcomeFormContainer css={tw`w-full flex`}>
-            <div css={tw`mt-6`}>
+            <div css={tw`m-auto`}>
                 <Button type={'button'} size={'xlarge'} onClick={() => login()} disabled={loading}>
                     <FontAwesomeIcon icon={faUserLock}/> Log In
                 </Button>
-            </div>
-            <div css={tw`mt-6 text-center`}>
-                <Link
-                    to={'/auth/login/email'}
-                    css={tw`text-xs text-neutral-500 tracking-wide no-underline uppercase hover:text-neutral-600`}
-                >
-                    Login with Email
-                </Link>
+                <div css={tw`mt-6 text-center`}>
+                    <Link
+                        to={'/auth/login/email'}
+                        css={tw`text-xs text-neutral-500 tracking-wide no-underline uppercase hover:text-neutral-600`}
+                    >
+                        Login with Email
+                    </Link>
+                </div>
             </div>
         </WelcomeFormContainer>
     );
