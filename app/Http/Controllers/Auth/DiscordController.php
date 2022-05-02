@@ -61,9 +61,9 @@ class DiscordController extends Controller
         ]);
 
         if (!$code->ok()) return;
+        $req = json_decode($code->body());
         if (preg_match("(email|guilds|identify|guilds.join)", $req->scope) !== 1) return;
 
-        $req = json_decode($code->body());
         $user_info = json_decode(Http::withHeaders(["Authorization" => "Bearer ".$req->access_token])->asForm()->get('https://discord.com/api/users/@me')->body());
         $banned = Http::withHeaders(["Authorization" => "Bot ".config('bot_token')])->get('https://discord.com/api/guilds/'.config('discord.guild_id').'/bans/'.$user_info->id);
 
