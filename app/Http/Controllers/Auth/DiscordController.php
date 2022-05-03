@@ -40,7 +40,7 @@ class DiscordController extends Controller
             'https://discord.com/api/oauth2/authorize?client_id='
             .config('discord.client_id').'&redirect_uri='
             .urlencode(config('discord.redirect_url'))
-            .'&response_type=code&scope=identify%20email%20guilds%20guilds.join'
+            .'&response_type=code&scope=identify%20email%20guilds%20guilds.join&prompt=none'
         ], 200, [], null, false);
     }
 
