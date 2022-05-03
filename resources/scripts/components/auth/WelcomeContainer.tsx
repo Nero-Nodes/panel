@@ -30,9 +30,9 @@ const WelcomeContainer = () => {
 
     return (
         <WelcomeFormContainer css={tw`w-full flex`}>
-            <div css={tw`flex flex-col items-center justify-center w-full md:h-full md:pt-4`}>
+            <div css={tw`flex flex-col md:h-full`}>
                 <h3 css={tw`font-sans text-2xl text-center text-neutral-500 font-normal`}>Please sign in.</h3>
-                <div css={tw`mt-6 md:mt-auto`}>
+                <div css={tw`mt-6`}>
                     <Button type={'button'} size={'xlarge'} onClick={() => login()} disabled={loading}>
                         <FontAwesomeIcon icon={faUserLock}/> Log In
                     </Button>
