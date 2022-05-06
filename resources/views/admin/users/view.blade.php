@@ -53,6 +53,10 @@
                                 <input type="text" name="name_last" value="{{ $user->name_last }}" class="form-control form-autocomplete-stop">
                             </div>
                         </div>
+                        <label class="control-label">Created At</label>
+                        <div>
+                            <code>{{ $user->created_at }}</code>
+                        </div>
                         <div class="form-group">
                             <label class="control-label">Default Language</label>
                             <div>

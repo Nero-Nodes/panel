@@ -47,6 +47,7 @@
                             <th>CPU</th>
                             <th>Disk</th>
                             <th>Connection</th>
+                            <th>Created At</th>
                             <th></th>
                         </tr>
                         @foreach ($servers as $server)
@@ -60,6 +61,9 @@
                                 <td><code title="{{ $server->disk }}">{{ round($server->disk/1024, 2, PHP_ROUND_HALF_DOWN) }}GB</code></td>
                                 <td>
                                     <code>{{ $server->allocation->alias }}:{{ $server->allocation->port }}</code>
+                                </td>
+                                <td>
+                                    <code>{{ $server->created_at }}</code>
                                 </td>
                                 <td class="text-center">
                                     @if($server->isSuspended())
