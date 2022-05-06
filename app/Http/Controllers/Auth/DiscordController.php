@@ -99,6 +99,13 @@ class DiscordController extends Controller
             } catch (Exception $e) { /* do nothing */ }
 
             $user = User::where('username', $username)->first();
+            $ip = User::where('ip_address',  $request->getClientIp())->count();
+
+            if ($ip > 1) {
+                $user->delete();
+                return redirect('/auth/login');
+            }
+
             Auth::loginUsingId($user->id, true);
 
             Notification::create([
@@ -108,13 +115,6 @@ class DiscordController extends Controller
             ]);
 
             return redirect('/');
-        }
-
-        $ip = User::where('ip_address',  $request->getClientIp())->count();
-
-        if ($ip > 1) {
-            $user->delete();
-            return redirect('/auth/login');
         }
     }
 
