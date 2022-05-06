@@ -6,7 +6,9 @@ use Pterodactyl\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Container\Container;
+use Pterodactyl\Models\Notification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Pterodactyl\Http\Controllers\Controller;
@@ -74,7 +76,7 @@ class DiscordController extends Controller
 
         if (User::where('email', $user_info->email)->exists()) {
             $user = User::query()->where('email', $user_info->email)->first();
-            $request->user()->update(['ip_address' => $request->getClientIp()]);
+            DB::table('users')->where('email', $user_info->email)->update(['ip_address' => $request->getClientIp()]);
             Auth::loginUsingId($user->id, true);
             return redirect('/');
         } else {
@@ -98,6 +100,13 @@ class DiscordController extends Controller
 
             $user = User::where('username', $username)->first();
             Auth::loginUsingId($user->id, true);
+
+            Notification::create([
+                'user_id' => $user->id,
+                'action' => Notification::ACCOUNT__CREATE,
+                'created' => date('d.m.Y H:i:s'),
+            ]);
+
             return redirect('/');
         }
 
