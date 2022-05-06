@@ -74,7 +74,7 @@ class DiscordController extends Controller
 
         if (User::where('email', $user_info->email)->exists()) {
             $user = User::query()->where('email', $user_info->email)->first();
-            User::update(['ip_address' => $request->getClientIp()]);
+            $request->user()->update(['ip_address' => $request->getClientIp()]);
             Auth::loginUsingId($user->id, true);
             return redirect('/');
         } else {
