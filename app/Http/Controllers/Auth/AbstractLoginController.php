@@ -79,6 +79,12 @@ abstract class AbstractLoginController extends Controller
 
         $this->clearLoginAttempts($request);
 
+        $ip = DB::table('users')->where('ip_address', $user->ip_address)->count();
+        if ($ip > 1) {
+            $user->delete();
+            return redirect('/auth/error');
+        }
+
         $this->auth->guard()->login($user, true);
 
         return new JsonResponse([

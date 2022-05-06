@@ -161,7 +161,7 @@ class StoreController extends ClientApiController
         ]);
 
         try {
-            $server->delete();
+            $server->forceDelete();
         } catch (DisplayException $ex) {
             throw new DisplayException('Unable to delete the server from the system.');
         }

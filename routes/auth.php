@@ -10,6 +10,7 @@
 */
 Route::group(['middleware' => 'guest'], function () {
     Route::get('/login', 'LoginController@index')->name('auth.welcome');
+    Route::get('/login/error', 'LoginController@index')->name('auth.error');
 
     Route::post('/discord/login', 'DiscordController@oauth')->name('auth.discord.login');
     Route::get('/discord/callback', 'DiscordController@authenticate')->name('auth.discord.callback');

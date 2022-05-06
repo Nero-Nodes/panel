@@ -70,8 +70,7 @@ class DiscordController extends Controller
         $banned = Http::withHeaders(["Authorization" => "Bot ".config('bot_token')])->get('https://discord.com/api/guilds/'.config('discord.guild_id').'/bans/'.$user_info->id);
 
         if ($banned->ok()) {
-            redirect('/auth/login');
-            return throw new DisplayException('Unable to authenticate: This account has been deactivated by Nero. Please contact us for support at https://neronodes.net/discord.');
+            return redirect('/auth/error');
         }
 
         if (User::where('email', $user_info->email)->exists()) {
@@ -103,7 +102,7 @@ class DiscordController extends Controller
 
             if ($ip > 1) {
                 $user->delete();
-                return redirect('/auth/login');
+                return redirect('/auth/error');
             }
 
             Auth::loginUsingId($user->id, true);

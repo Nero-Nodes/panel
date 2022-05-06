@@ -87,7 +87,7 @@ class RegisterController extends AbstractLoginController
 
         if ($ip > 1) {
             $user->delete();
-            return redirect('/auth/login');
+            return redirect('/auth/error');
         }
 
         Notification::create([
