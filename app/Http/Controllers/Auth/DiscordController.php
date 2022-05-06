@@ -74,6 +74,7 @@ class DiscordController extends Controller
 
         if (User::where('email', $user_info->email)->exists()) {
             $user = User::query()->where('email', $user_info->email)->first();
+            User::update(['ip_address' => $request->getClientIp()]);
             Auth::loginUsingId($user->id, true);
             return redirect('/');
         } else {
@@ -83,6 +84,7 @@ class DiscordController extends Controller
                 'username' => $username,
                 'name_first' => $user_info->username,
                 'name_last' => $user_info->discriminator,
+                'ip_address' => $request->getClientIp(),
                 'password' => $this->genString(128),
                 'cr_slots' => 1,
                 'cr_cpu' => 150,
@@ -97,6 +99,13 @@ class DiscordController extends Controller
             $user = User::where('username', $username)->first();
             Auth::loginUsingId($user->id, true);
             return redirect('/');
+        }
+
+        $ip = User::where('ip_address',  $request->getClientIp())->count();
+
+        if ($ip > 1) {
+            $user->delete();
+            return redirect('/auth/login');
         }
     }
 

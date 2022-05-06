@@ -71,6 +71,7 @@ class RegisterController extends AbstractLoginController
             'uuid' => Uuid::uuid4()->toString(),
             'username' => $request->input('username'),
             'email' => $request->input('email'),
+            'ip_address' => $request->getClientIp(),
             'password' => $this->hasher->make($request->input('password')),
             'name_first' => $request->input('name_first'),
             'name_last' => $request->input('name_last'),
@@ -81,6 +82,13 @@ class RegisterController extends AbstractLoginController
         ];
 
         $user = User::forceCreate($data);
+
+        $ip = User::where('ip_address',  $request->getClientIp())->count();
+
+        if ($ip > 1) {
+            $user->delete();
+            return redirect('/auth/login');
+        }
 
         Notification::create([
             'user_id' => $user->id,
