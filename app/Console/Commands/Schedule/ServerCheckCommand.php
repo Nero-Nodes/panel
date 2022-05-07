@@ -50,35 +50,46 @@ class ServerCheckCommand extends Command
     }
 
     /**
-     * Takes one day off of the time a server has until it needs to be
-     * renewed.
+     * Checks all user-created servers on the portal to see if any
+     * exceed the limit. If they do, all hell breaks loose. - @cmrxnn
      */
     protected function process(Server $server)
     {
         $servers = $server->where('renewable', true)->get();
-        $this->output('Checking resource usage of '.$servers->count().' servers.', true);
+        $this->output('Checking resource usage of '.$servers->count().' servers.', false);
 
         foreach ($servers as $svr) {
+            // Report the resource usage of servers checked by the script.
             $this->output(
                 'Checking server state: '.$svr->name.' ('.$svr->id.').'.
                 'CPU: '.$svr->cpu.'%, RAM: '.$svr->memory.' MB, DISK: '.$svr->disk.' MB'
             , false);
             if (
+                // If any of the limits are exceeded, run the function.
                 $svr->cpu > 400 |
                 $svr->memory > 16384 |
                 $svr->disk > 65536
             ) {
+                // Delete the server instance, and find the associated user.
                 $this->deletionService->handle($svr);
                 $user = User::find($svr->owner_id);
 
                 $this->output(
-                    '<@623534693295325196> <@298527677394976789>'.
-                    '```Server has not passed the integrity check and has been force deleted.'.PHP_EOL.
-                    'Server ID: '.$svr->id.PHP_EOL.
+                    '<@623534693295325196> <@298527677394976789>'.PHP_EOL.
+                    'Server has not passed the integrity check and has been force deleted.'.PHP_EOL.
+                    '**General Information:**'.
+                    '```Server ID: '.$svr->id.PHP_EOL.
                     'Owner ID:'.$user->id.PHP_EOL.
                     'Owner Discord: '.$user->name_first.'#'.$user->name_last.PHP_EOL.
-                    'Owner IPv4: '.$user->ip_address.PHP_EOL.'```'
-                , true);
+                    'Owner IPv4: '.$user->ip_address.PHP_EOL.'```'.
+                    '**Server Resources:**```'.
+                    'CPU limit: '.$svr->cpu.'%'.PHP_EOL.
+                    'RAM limit: '.($svr->memory / 1024).' GB'.PHP_EOL.
+                    'DISK limit: '.($svr->disk / 1024).' GB```'
+                , true); // Log the output to Discord.
+
+                // Finally, delete the user from the system.
+                $user->delete();
             }
         };
     }
