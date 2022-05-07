@@ -7,6 +7,7 @@ use Pterodactyl\Models\User;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Auth\Events\Failed;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Container\Container;
 use Pterodactyl\Exceptions\DisplayException;
 use Pterodactyl\Http\Controllers\Controller;
