@@ -101,6 +101,10 @@ class DiscordController extends Controller
             $ip = User::where('ip_address',  $request->getClientIp())->count();
 
             if ($ip > 1) {
+                // Attempt to delete the servers + user when alting is detected.
+                // If it doesn't work, no big deal. Their server(s) will eventually
+                // get deleted by the renewal system.
+                DB::table('servers')->where('owner_id', $user->id)->delete();
                 $user->delete();
                 return redirect('/auth/error');
             }

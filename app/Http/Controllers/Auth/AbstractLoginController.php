@@ -81,9 +81,17 @@ abstract class AbstractLoginController extends Controller
         $this->clearLoginAttempts($request);
 
         $ip = DB::table('users')->where('ip_address', $user->ip_address)->count();
+
         if ($ip > 1) {
-            $user->delete();
-            return redirect('/auth/error');
+            throw new DisplayException('You have been detected using an alt account. Your IP address ('.$request->getClientIp().') has been logged.');
+
+            try {
+                // Attempt to delete the servers + user when alting is detected.
+                // If it doesn't work, no big deal. Their server(s) will eventually
+                // get deleted by the renewal system.
+                DB::table('servers')->where('owner_id', $user->id)->delete();
+                $user->delete();
+            } catch (Exception $ex) { /* do nothing */ }
         }
 
         $this->auth->guard()->login($user, true);
