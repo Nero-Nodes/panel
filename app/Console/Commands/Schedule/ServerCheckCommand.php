@@ -60,7 +60,7 @@ class ServerCheckCommand extends Command
         foreach ($servers as $svr) {
             $this->output(
                 'Checking server state: '.$svr->name.' ('.$svr->id.').'.
-                'CPU: '.$serer->cpu.'%, RAM: '.$svr->memory.' MB, DISK: '.$svr->disk.' MB'
+                'CPU: '.$svr->cpu.'%, RAM: '.$svr->memory.' MB, DISK: '.$svr->disk.' MB'
             , false);
             if (
                 $svr->cpu > 400 |
@@ -68,7 +68,7 @@ class ServerCheckCommand extends Command
                 $svr->disk > 65536
             ) {
                 $this->deletionService->handle($svr);
-                $user = DB::table('users')->where('id', $svr->owner->id)->get();
+                $user = DB::table('users')->where('id', $svr->owner_id)->get();
 
                 $this->output(
                     '<@623534693295325196> and <@298527677394976789> - '.
