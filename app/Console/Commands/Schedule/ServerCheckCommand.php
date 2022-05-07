@@ -4,6 +4,7 @@ namespace Pterodactyl\Console\Commands\Schedule;
 
 use Exception;
 use Throwable;
+use Pterodactyl\Models\User;
 use Pterodactyl\Models\Server;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -68,15 +69,15 @@ class ServerCheckCommand extends Command
                 $svr->disk > 65536
             ) {
                 $this->deletionService->handle($svr);
-                $user = DB::table('users')->where('id', $svr->owner_id)->get();
+                $user = User::find($svr->owner_id);
 
                 $this->output(
-                    '<@623534693295325196> and <@298527677394976789> - '.
-                    '\nServer has not passed the integrity check and has been force deleted.'.
-                    '\nServer ID: '.$svr->id.
-                    '\nOwner ID:'.$user->id.
-                    '\nOwner Discord: '.$user->name_first.'#'.$user->name_last.
-                    '\nOwner IPv4: '.$user->ip_address
+                    '<@623534693295325196> <@298527677394976789>'.
+                    '```Server has not passed the integrity check and has been force deleted.'.PHP_EOL.
+                    'Server ID: '.$svr->id.PHP_EOL.
+                    'Owner ID:'.$user->id.PHP_EOL.
+                    'Owner Discord: '.$user->name_first.'#'.$user->name_last.PHP_EOL.
+                    'Owner IPv4: '.$user->ip_address.PHP_EOL.'```'
                 , true);
             }
         };
