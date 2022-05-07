@@ -57,8 +57,8 @@ class StoreController extends ClientApiController
             return throw new DisplayException('You cannot deploy more than 2 servers.');
         }
 
-        $egg = DB::table('eggs')->where('id', '=', 4)->first();
-        $nest = DB::table('nests')->where('id', '=', 1)->first();
+        $egg = DB::table('eggs')->where('id', '=', env('STORE_EGG_ID'))->first();
+        $nest = DB::table('nests')->where('id', '=', env('STORE_NEST_ID'))->first();
 
         $data = [
             'name' => $request->input('name'),
