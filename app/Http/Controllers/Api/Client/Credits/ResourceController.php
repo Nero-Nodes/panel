@@ -98,7 +98,7 @@ class ResourceController extends ClientApiController
         $user_resources = DB::table('users')->select(['cr_balance', 'cr_storage'])->where('id', '=', $request->user()->id)->get()[0];
         $cost = $this->credits->get('store:storage_cost', 5);
 
-        if ($request->user()->cr_ram > 15360) {
+        if ($request->user()->cr_storage > 15360) {
             return throw new DisplayException('You cannot have more than 16GB Storage in the store at a time.');
         }
 
