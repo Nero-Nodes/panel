@@ -18,8 +18,9 @@ class EditServerService
         $user = $request->user();
 
         if ($resource == 1) {
-
             if ($user->cr_cpu < 50) return throw new DisplayException('You do not have enough CPU to perform this action.');
+            if ($server->cpu > 350) return throw new DisplayException('You cannot have more than 400% CPU applied to your server.');
+
             // We'll start by adding the resource to the server.
             $server->update([
                 'cpu' => $server->cpu + $value,
@@ -33,6 +34,8 @@ class EditServerService
 
         if ($resource == 2) {
             if ($user->cr_ram < 1024) return throw new DisplayException('You do not have enough RAM to perform this action.');
+            if ($server->memory > 15360) return throw new DisplayException('You cannot have more than 16GB RAM applied to your server.');
+
             // We'll start by adding the resource to the server.
             $server->update([
                 'memory' => $server->memory + $value,
@@ -46,6 +49,8 @@ class EditServerService
 
         if ($resource == 3) {
             if ($user->cr_storage < 1024) return throw new DisplayException('You do not have enough storage to perform this action.');
+            if ($server->disk > 64512) return throw new DisplayException('You cannot have more than 64GB storage applied to your server.');
+
             // We'll start by adding the resource to the server.
             $server->update([
                 'disk' => $server->disk + $value,

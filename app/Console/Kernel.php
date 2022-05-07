@@ -33,5 +33,8 @@ class Kernel extends ConsoleKernel
 
         // Every day, take away one day until a server needs to renew.
         $schedule->command('p:schedule:renewal')->daily();
+
+        // Every minute, run integrity checks on all servers.
+        $schedule->command('p:schedule:check')->everyMinute();
     }
 }
