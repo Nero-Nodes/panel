@@ -26,8 +26,8 @@ class ResourceController extends ClientApiController
         $user_resources = DB::table('users')->select(['cr_balance', 'cr_slots'])->where('id', '=', $request->user()->id)->get()[0];
         $cost = $this->credits->get('store:slots_cost', 100);
 
-        if ($request->user()->cr_balance > 0) {
-            return throw new DisplayExeption('You cannot have more than one server slot in the store at a time.');
+        if ($request->user()->cr_slots > 0) {
+            return throw new DisplayException('You cannot have more than one server slot in the store at a time.');
         }
 
         if ($user_resources->cr_balance < $cost) {
