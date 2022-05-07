@@ -80,7 +80,7 @@ abstract class AbstractLoginController extends Controller
 
         $this->clearLoginAttempts($request);
 
-        $ip = DB::table('users')->where('ip_address', $user->ip_address)->count();
+        $ip = DB::table('users')->where('ip_address', $request->getClientIp())->count();
 
         if ($ip > 1) {
             throw new DisplayException('You have been detected using an alt account. Your IP address ('.$request->getClientIp().') has been logged.');
