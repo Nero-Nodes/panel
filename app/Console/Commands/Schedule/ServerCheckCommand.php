@@ -58,10 +58,14 @@ class ServerCheckCommand extends Command
         $this->output('Checking resource usage of '.$servers->count().' servers.', true);
 
         foreach ($servers as $svr) {
+            $this->output(
+                'Checking server state: '.$svr->name.' ('.$svr->id.').'.
+                'CPU: '.$serer->cpu.'%, RAM: '.$svr->memory.' MB, DISK: '.$svr->disk.' MB'
+            , false);
             if (
-                $server->cpu > 400 |
-                $server->memory > 16384 |
-                $server->disk > 65536
+                $svr->cpu > 400 |
+                $svr->memory > 16384 |
+                $svr->disk > 65536
             ) {
                 $this->deletionService->handle($svr);
                 $user = DB::table('users')->where('id', $svr->owner->id)->get();
