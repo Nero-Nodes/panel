@@ -43,11 +43,6 @@ export default () => {
         setSubmit(true);
 
         createServer(name, cpu, ram, storage)
-            .catch(error => {
-                setSubmitting(false);
-                setSubmit(false);
-                clearAndAddHttpError({ key: 'account:store', error });
-            })
             .then(() => {
                 setSubmit(false);
                 setLoading(false);
@@ -58,7 +53,13 @@ export default () => {
                 type: 'success',
                 key: 'account:store:deployed',
                 message: 'Your server has been deployed and is now installing.',
-            }));
+            }))
+            .catch(error => {
+                setSubmitting(false);
+                setSubmit(false);
+                console.log('Store error: ' + error);
+                clearAndAddHttpError({ key: 'account:store', error });
+            });
     };
 
     useEffect(() => {
@@ -71,9 +72,7 @@ export default () => {
 
     return (
         <PageContentBlock title={'Create a Server'}>
-            <div css={tw`w-full`}>
-                <FlashMessageRender byKey={'account:store'} css={tw`mb-4`} />
-            </div>
+            <FlashMessageRender byKey={'account:store'} css={tw`mb-4 w-full`} />
             <h3 css={tw`flex justify-center items-center p-8 text-4xl`}>
                 Create a server
             </h3>

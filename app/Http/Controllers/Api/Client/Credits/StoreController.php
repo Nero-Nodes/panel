@@ -68,6 +68,10 @@ class StoreController extends ClientApiController
             'storage' => 'required',
         ]);
 
+        if ($request->user()->servers()->count() > 1) {
+            return throw new DisplayException('You cannot deploy more than 2 servers.');
+        }
+
         $egg = DB::table('eggs')->where('id', '=', 4)->first();
         $nest = DB::table('nests')->where('id', '=', 1)->first();
 
@@ -96,12 +100,20 @@ class StoreController extends ClientApiController
         }
 
         if (
+            $request->input('cpu') > 300 |
+            $request->input('ram') > 12288 |
+            $request->input('storage') > 49152
+        ) {
+            return throw new DisplayException('Limits per server are: 300% CPU, 12GB RAM and 48GB storage.');
+        }
+
+        if (
             $request->user()->cr_slots < 1 |
             $request->user()->cr_cpu < $request->input('cpu') |
             $request->user()->cr_ram < $request->input('ram') |
             $request->user()->cr_storage < $request->input('storage')
         ) {
-            throw new DisplayException('You don\'t have the resources available to make this server.');
+            return throw new DisplayException('You don\'t have the resources available to make this server.');
         }
 
         $server = $this->creationService->handle($data);
@@ -135,7 +147,7 @@ class StoreController extends ClientApiController
                 'cr_balance' => $user->cr_balance + 1,
             ]);
         } catch (DisplayException $ex) {
-            throw new DisplayException('Unable to passively earn coins.');
+            return throw new DisplayException('Unable to passively earn coins.');
         }
 
         return [
@@ -163,7 +175,7 @@ class StoreController extends ClientApiController
         try {
             $server->forceDelete();
         } catch (DisplayException $ex) {
-            throw new DisplayException('Unable to delete the server from the system.');
+            return throw new DisplayException('Unable to delete the server from the system.');
         }
 
         return [
@@ -182,7 +194,7 @@ class StoreController extends ClientApiController
         try {
             $server->renew($request);
         } catch (DisplayException $e) {
-            throw new DisplayException('There was an error while renewing your server. Please contact support.');
+            return throw new DisplayException('There was an error while renewing your server. Please contact support.');
         }
     }
 
