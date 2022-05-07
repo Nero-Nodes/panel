@@ -35,21 +35,6 @@ class StoreController extends ClientApiController
     }
 
     /**
-     * Get the configuration for users visiting the store.
-     */
-    public function getConfig(StoreRequest $request): array
-    {
-        $user = DB::table('users')->select('cr_slots', 'cr_cpu', 'cr_ram', 'cr_storage')->where('id', '=', $request->user()->id)->get();
-
-        return [
-            'success' => true,
-            'data' => [
-                'user' => $user,
-            ],
-        ];
-    }
-
-    /**
      * Deploys a server to Jexactyl via the store.
      * 
      * @throws DisplayException
