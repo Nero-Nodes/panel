@@ -26,7 +26,7 @@ class ResourceController extends ClientApiController
         $user_resources = DB::table('users')->select(['cr_balance', 'cr_slots'])->where('id', '=', $request->user()->id)->get()[0];
         $cost = $this->credits->get('store:slots_cost', 100);
 
-        if ($user->cr_balance > 0) {
+        if ($request->user()->cr_balance > 0) {
             return throw new DisplayExeption('You cannot have more than one server slot in the store at a time.');
         }
 
@@ -50,7 +50,7 @@ class ResourceController extends ClientApiController
         $user_resources = DB::table('users')->select(['cr_balance', 'cr_cpu'])->where('id', '=', $request->user()->id)->get()[0];
         $cost = $this->credits->get('store:cpu_cost', 20);
 
-        if ($user->cr_cpu > 250) {
+        if ($request->user()->cr_cpu > 250) {
             return throw new DisplayException('You cannot have more than 300% CPU in the store at a time.');
         }
 
@@ -74,7 +74,7 @@ class ResourceController extends ClientApiController
         $user_resources = DB::table('users')->select(['cr_balance', 'cr_ram'])->where('id', '=', $request->user()->id)->get()[0];
         $cost = $this->credits->get('store:ram_cost', 10);
 
-        if ($user->cr_ram > 7168) {
+        if ($request->user()->cr_ram > 7168) {
             return throw new DisplayException('You cannot have more than 8GB RAM in the store at a time.');
         }
 
@@ -98,7 +98,7 @@ class ResourceController extends ClientApiController
         $user_resources = DB::table('users')->select(['cr_balance', 'cr_storage'])->where('id', '=', $request->user()->id)->get()[0];
         $cost = $this->credits->get('store:storage_cost', 5);
 
-        if ($user->cr_ram > 15360) {
+        if ($request->user()->cr_ram > 15360) {
             return throw new DisplayException('You cannot have more than 16GB Storage in the store at a time.');
         }
 
