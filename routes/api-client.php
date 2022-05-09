@@ -128,7 +128,7 @@ Route::group(['prefix' => '/servers/{server}', 'middleware' => [AuthenticateServ
 
     Route::group(['prefix' => '/settings'], function () {
         Route::post('/rename', 'Servers\SettingsController@rename');
-        Route::post('/delete', 'Credits\StoreController@deleteServer');
+        Route::post('/delete', 'Credits\StoreController@deleteServer')->name('api:client:server.delete');
         Route::post('/reinstall', 'Servers\SettingsController@reinstall');
         Route::post('/edit', 'Servers\SettingsController@edit');
         Route::put('/docker-image', 'Servers\SettingsController@dockerImage');
