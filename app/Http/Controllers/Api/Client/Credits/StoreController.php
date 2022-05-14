@@ -11,6 +11,7 @@ use Illuminate\Validation\ValidationException;
 use Pterodactyl\Repositories\Eloquent\NodeRepository;
 use Pterodactyl\Http\Requests\Api\Client\StoreRequest;
 use Pterodactyl\Services\Servers\ServerCreationService;
+use Pterodactyl\Services\Servers\ServerDeletionService;
 use Pterodactyl\Exceptions\Repository\RecordNotFoundException;
 use Pterodactyl\Http\Controllers\Api\Client\ClientApiController;
 use Pterodactyl\Exceptions\Service\Deployment\NoViableNodeException;
@@ -26,12 +27,14 @@ class StoreController extends ClientApiController
      */
     public function __construct(
         ServerCreationService $creationService,
-        NodeRepository $nodeRepository
+        NodeRepository $nodeRepository,
+        ServerDeletionService $deletionService
     )
     {
         parent::__construct();
         $this->creationService = $creationService;
         $this->nodeRepository = $nodeRepository;
+        $this->deletionService = $deletionService;
     }
 
     /**
@@ -158,7 +161,7 @@ class StoreController extends ClientApiController
         ]);
 
         try {
-            $server->forceDelete();
+            $this->deletionService->handle($server);
         } catch (DisplayException $ex) {
             return throw new DisplayException('Unable to delete the server from the system.');
         }
