@@ -35,6 +35,9 @@ class ServerStopCommand extends Command
      */
     protected function handle(Server $server, DaemonPowerRepository $powerRepository, DaemonCommandRepository $commandRepository)
     {
+        $this->output('Waiting 10 seconds...', false);
+        sleep(10);
+
         $servers = $server->where('renewable', true)->get();
         $this->output('Retrieved ' . $servers->count() . ' servers.', false);
 
