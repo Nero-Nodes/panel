@@ -38,6 +38,6 @@ class Kernel extends ConsoleKernel
         $schedule->command('p:schedule:check')->everyMinute();
 
         // Every day, shutdown servers with default resources.
-        $schedule->command('p:schedule:stop')->daily();
+        // $schedule->command('p:schedule:stop')->daily();
     }
 }
