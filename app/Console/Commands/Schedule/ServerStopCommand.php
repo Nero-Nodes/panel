@@ -8,6 +8,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Pterodactyl\Repositories\Wings\DaemonPowerRepository;
 use Pterodactyl\Repositories\Wings\DaemonCommandRepository;
+use Pterodactyl\Exceptions\Http\Server\ServerStateConflictException;
 use Pterodactyl\Exceptions\Http\Connection\DaemonConnectionException;
 
 class ServerStopCommand extends Command
@@ -48,9 +49,18 @@ class ServerStopCommand extends Command
         $this->output('Retrieved ' . $servers->count() . ' servers.', false);
 
         foreach ($servers as $svr) {
+            // Try and validate the current server's status. If it is suspended,
+            // transferring or unavailable, move on.
+            try {
+                $svr->validateCurrentState();
+            } catch (ServerStateConflictException $exception) {
+                // Catch the error when servers cannot be accessed.
+                return $this->output($svr->id.' | ERR | Server is suspended or unavailable. Ignoring this instance.', false);
+            }
+
             // Log to the console when a server has been detected as having
             // only the default limits allocated to it.
-            $this->output($svr->id.' | Detected as having '.$svr->cpu.'% CPU, '.$svr->memory.'MB RAM, '.$svr->disk.'MB disk.', false);
+            $this->output($svr->id.' | '.$svr->status.' | Detected as having '.$svr->cpu.'% CPU, '.$svr->memory.'MB RAM, '.$svr->disk.'MB disk.', false);
 
             // Send a message to the console which will show up in Minecraft
             // servers which informs the user of the scheduled shutdown.
@@ -65,12 +75,15 @@ class ServerStopCommand extends Command
             sleep(5);
 
             try {
-                // Shut down the server instance.
+                // If the server is already offline, don't try and shut it down.
+                if ($svr->status == 'offline') return;
+
+                // If the status is not offline or suspended, shut down the server instance.
                 $powerRepository->setServer($svr)->send('stop');
                 $this->output($svr->id . ' | Shutdown success, looping to next server.', false);
             } catch (DaemonConnectionException $exception) {
                 // Report an error to the console when server cannot be shutdown.
-                $this->output($svr->id.' | ERR | '.$exception, false);
+                $this->output($svr->id.' | ERR | Unable to connect to the daemon, unable to request server shutdown.', false);
             }
         };
 
