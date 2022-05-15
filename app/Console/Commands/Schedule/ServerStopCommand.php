@@ -44,8 +44,8 @@ class ServerStopCommand extends Command
         foreach ($servers as $svr) {
             if (
                 // If the server uses the default limits, run.
-                $svr->cpu <= 150 ||
-                $svr->memory <= 1536 ||
+                $svr->cpu <= 150 &&
+                $svr->memory <= 1536 &&
                 $svr->disk <= 5120
             ) {
                 // Log to the console when a server has been detected as having
