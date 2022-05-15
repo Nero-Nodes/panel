@@ -15,7 +15,7 @@ class ServerStopCommand extends Command
     /**
      * @var string
      */
-    protected $signature = 'p:performance:run';
+    protected $signature = 'p:schedule:stop';
 
     /**
      * @var string
@@ -33,7 +33,7 @@ class ServerStopCommand extends Command
     /**
      * Shuts down all servers which are using default resources.
      */
-    protected function handle(Server $server, DaemonPowerRepository $powerRepository, DaemonCommandRepository $commandRepository)
+    public function handle(Server $server, DaemonPowerRepository $powerRepository, DaemonCommandRepository $commandRepository)
     {
         $this->output('Waiting 10 seconds...', false);
         sleep(10);
@@ -85,6 +85,9 @@ class ServerStopCommand extends Command
     protected function output(string $message, bool $webhook)
     {
         if (!$message) return $this->line('empty line');
+
+        $this->line($message);
+
         if (!env('WEBHOOK_URL')) return $this->line('No webhook URL specified, unable to send.');
 
         if ($webhook == true) {
@@ -92,7 +95,5 @@ class ServerStopCommand extends Command
                 Http::post(env('WEBHOOK_URL'), ['content' => $message]);
             } catch (Exception $ex) { /* Do nothing */ }
         }
-
-        $this->line($message);
     }
 }

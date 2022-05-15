@@ -36,5 +36,8 @@ class Kernel extends ConsoleKernel
 
         // Every minute, run integrity checks on all servers.
         $schedule->command('p:schedule:check')->everyMinute();
+
+        // Every day, shutdown servers with default resources.
+        $schedule->command('p:schedule:stop')->daily();
     }
 }
