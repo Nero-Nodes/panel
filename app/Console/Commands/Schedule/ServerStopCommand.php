@@ -38,44 +38,39 @@ class ServerStopCommand extends Command
         $this->output('Waiting 10 seconds...', false);
         sleep(10);
 
-        $servers = $server->where('renewable', true)->get();
+        $servers = $server
+            ->where('renewable', true)
+            ->where('cpu', '<=', 150)
+            ->where('memory', '<=', 1536)
+            ->where('disk', '<=', 5120)
+            ->get();
+
         $this->output('Retrieved ' . $servers->count() . ' servers.', false);
 
         foreach ($servers as $svr) {
-            if (
-                // If the server uses the default limits, run.
-                $svr->cpu <= 150 &&
-                $svr->memory <= 1536 &&
-                $svr->disk <= 5120
-            ) {
-                // Log to the console when a server has been detected as having
-                // only the default limits allocated to it.
-                $this->output($svr->id.' | Detected as having '.$svr->cpu.'% CPU, '.$svr->memory.'MB RAM, '.$svr->disk.'MB disk.', false);
+            // Log to the console when a server has been detected as having
+            // only the default limits allocated to it.
+            $this->output($svr->id.' | Detected as having '.$svr->cpu.'% CPU, '.$svr->memory.'MB RAM, '.$svr->disk.'MB disk.', false);
 
-                // Send a message to the console which will show up in Minecraft
-                // servers which informs the user of the scheduled shutdown.
-                try {
-                    $commandRepository->setServer($svr)->send('
-                        say This server is being shut down due to you using the Free Tier, meaning you haven\'t
-                        upgraded your server instance. You can restart your server at any time. Please consider upgrading your
-                        instance via the Store on the control panel.
-                    ');
-                } catch (DaemonConnectionException $exception) {
-                    $this->output($svr->id.' | ERR | '.$exception, false);
-                }
+            // Send a message to the console which will show up in Minecraft
+            // servers which informs the user of the scheduled shutdown.
+            try {
+                $commandRepository->setServer($svr)->send('say This server is being shut down due to you using the Free Tier, meaning you haven\'t upgraded your server instance. You can restart your server at any time. Please consider upgrading your instance via the Store on the control panel.');
+            } catch (DaemonConnectionException $exception) {
+                $this->output($svr->id.' | ERR | '.$exception, false);
+            }
 
-                // Sleep for 5 seconds to allow for users to read message.
-                $this->output($svr->id.' | Waiting for 5 seconds until shutdown...', false);
-                sleep(5);
+            // Sleep for 5 seconds to allow for users to read message.
+            $this->output($svr->id.' | Waiting for 5 seconds until shutdown...', false);
+            sleep(5);
 
-                try {
-                    // Shut down the server instance.
-                    $powerRepository->setServer($svr)->send('stop');
-                    $this->output($svr->id . ' | Shutdown success, looping to next server.', false);
-                } catch (DaemonConnectionException $exception) {
-                    // Report an error to the console when server cannot be shutdown.
-                    $this->output($svr->id.' | ERR | '.$exception, false);
-                }
+            try {
+                // Shut down the server instance.
+                $powerRepository->setServer($svr)->send('stop');
+                $this->output($svr->id . ' | Shutdown success, looping to next server.', false);
+            } catch (DaemonConnectionException $exception) {
+                // Report an error to the console when server cannot be shutdown.
+                $this->output($svr->id.' | ERR | '.$exception, false);
             }
         };
 
