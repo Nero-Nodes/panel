@@ -6,17 +6,17 @@
 @extends('layouts.admin')
 
 @section('title')
-    Server — {{ $server->name }}: Build Details
+Server — {{ $server->name }}: Build Details
 @endsection
 
 @section('content-header')
-    <h1>{{ $server->name }}<small>Control allocations and system resources for this server.</small></h1>
-    <ol class="breadcrumb">
-        <li><a href="{{ route('admin.index') }}">Admin</a></li>
-        <li><a href="{{ route('admin.servers') }}">Servers</a></li>
-        <li><a href="{{ route('admin.servers.view', $server->id) }}">{{ $server->name }}</a></li>
-        <li class="active">Build Configuration</li>
-    </ol>
+<h1>{{ $server->name }}<small>Control allocations and system resources for this server.</small></h1>
+<ol class="breadcrumb">
+    <li><a href="{{ route('admin.index') }}">Admin</a></li>
+    <li><a href="{{ route('admin.servers') }}">Servers</a></li>
+    <li><a href="{{ route('admin.servers.view', $server->id) }}">{{ $server->name }}</a></li>
+    <li class="active">Build Configuration</li>
+</ol>
 @endsection
 
 @section('content')
@@ -29,10 +29,10 @@
                     <h3 class="box-title">Resource Management</h3>
                 </div>
                 <div class="box-body">
-                <div class="form-group">
+                    <div class="form-group">
                         <label for="cpu" class="control-label">CPU Limit</label>
                         <div class="input-group">
-                            <input type="text" name="cpu" class="form-control" value="{{ old('cpu', $server->cpu) }}"/>
+                            <input type="text" name="cpu" class="form-control" value="{{ old('cpu', $server->cpu) }}" />
                             <span class="input-group-addon">%</span>
                         </div>
                         <p class="text-muted small">Each <em>virtual</em> core (thread) on the system is considered to be <code>100%</code>. Setting this value to <code>0</code> will allow a server to use CPU time without restrictions.</p>
@@ -40,14 +40,14 @@
                     <div class="form-group">
                         <label for="threads" class="control-label">CPU Pinning</label>
                         <div>
-                            <input type="text" name="threads" class="form-control" value="{{ old('threads', $server->threads) }}"/>
+                            <input type="text" name="threads" class="form-control" value="{{ old('threads', $server->threads) }}" />
                         </div>
                         <p class="text-muted small"><strong>Advanced:</strong> Enter the specific CPU cores that this process can run on, or leave blank to allow all cores. This can be a single number, or a comma seperated list. Example: <code>0</code>, <code>0-1,3</code>, or <code>0,1,3,4</code>.</p>
                     </div>
                     <div class="form-group">
                         <label for="memory" class="control-label">Allocated Memory</label>
                         <div class="input-group">
-                            <input type="text" name="memory" data-multiplicator="true" class="form-control" value="{{ old('memory', $server->memory) }}"/>
+                            <input type="text" name="memory" data-multiplicator="true" class="form-control" value="{{ old('memory', $server->memory) }}" />
                             <span class="input-group-addon">MB</span>
                         </div>
                         <p class="text-muted small">The maximum amount of memory allowed for this container. Setting this to <code>0</code> will allow unlimited memory in a container.</p>
@@ -55,7 +55,7 @@
                     <div class="form-group">
                         <label for="swap" class="control-label">Allocated Swap</label>
                         <div class="input-group">
-                            <input type="text" name="swap" data-multiplicator="true" class="form-control" value="{{ old('swap', $server->swap) }}"/>
+                            <input type="text" name="swap" data-multiplicator="true" class="form-control" value="{{ old('swap', $server->swap) }}" />
                             <span class="input-group-addon">MB</span>
                         </div>
                         <p class="text-muted small">Setting this to <code>0</code> will disable swap space on this server. Setting to <code>-1</code> will allow unlimited swap.</p>
@@ -63,7 +63,7 @@
                     <div class="form-group">
                         <label for="cpu" class="control-label">Disk Space Limit</label>
                         <div class="input-group">
-                            <input type="text" name="disk" class="form-control" value="{{ old('disk', $server->disk) }}"/>
+                            <input type="text" name="disk" class="form-control" value="{{ old('disk', $server->disk) }}" />
                             <span class="input-group-addon">MB</span>
                         </div>
                         <p class="text-muted small">This server will not be allowed to boot if it is using more than this amount of space. If a server goes over this limit while running it will be safely stopped and locked until enough space is available. Set to <code>0</code> to allow unlimited disk usage.</p>
@@ -71,9 +71,18 @@
                     <div class="form-group">
                         <label for="io" class="control-label">Block IO Proportion</label>
                         <div>
-                            <input type="text" name="io" class="form-control" value="{{ old('io', $server->io) }}"/>
+                            <input type="text" name="io" class="form-control" value="{{ old('io', $server->io) }}" />
                         </div>
                         <p class="text-muted small"><strong>Advanced</strong>: The IO performance of this server relative to other <em>running</em> containers on the system. Value should be between <code>10</code> and <code>1000</code>.</code></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="renewal" class="control-label">Renewal Days</label>
+                        <div>
+                            <input type="text" name="renewal" class="form-control" value="{{ old('renewal', $server->renewal) }}" />
+                        </div>
+                        <p class="text-muted small">
+                            The amount of days until the server must be renewed.
+                        </p>
                     </div>
                     <div class="form-group">
                         <label for="cpu" class="control-label">OOM Killer</label>
@@ -106,21 +115,21 @@
                                 <div class="form-group col-xs-6">
                                     <label for="database_limit" class="control-label">Database Limit</label>
                                     <div>
-                                        <input type="text" name="database_limit" class="form-control" value="{{ old('database_limit', $server->database_limit) }}"/>
+                                        <input type="text" name="database_limit" class="form-control" value="{{ old('database_limit', $server->database_limit) }}" />
                                     </div>
                                     <p class="text-muted small">The total number of databases a user is allowed to create for this server.</p>
                                 </div>
                                 <div class="form-group col-xs-6">
                                     <label for="allocation_limit" class="control-label">Allocation Limit</label>
                                     <div>
-                                        <input type="text" name="allocation_limit" class="form-control" value="{{ old('allocation_limit', $server->allocation_limit) }}"/>
+                                        <input type="text" name="allocation_limit" class="form-control" value="{{ old('allocation_limit', $server->allocation_limit) }}" />
                                     </div>
                                     <p class="text-muted small">The total number of allocations a user is allowed to create for this server.</p>
                                 </div>
                                 <div class="form-group col-xs-6">
                                     <label for="backup_limit" class="control-label">Backup Limit</label>
                                     <div>
-                                        <input type="text" name="backup_limit" class="form-control" value="{{ old('backup_limit', $server->backup_limit) }}"/>
+                                        <input type="text" name="backup_limit" class="form-control" value="{{ old('backup_limit', $server->backup_limit) }}" />
                                     </div>
                                     <p class="text-muted small">The total number of backups that can be created for this server.</p>
                                 </div>
@@ -138,10 +147,9 @@
                                 <label for="pAllocation" class="control-label">Game Port</label>
                                 <select id="pAllocation" name="allocation_id" class="form-control">
                                     @foreach ($assigned as $assignment)
-                                        <option value="{{ $assignment->id }}"
-                                            @if($assignment->id === $server->allocation_id)
-                                                selected="selected"
-                                            @endif
+                                    <option value="{{ $assignment->id }}" @if($assignment->id === $server->allocation_id)
+                                        selected="selected"
+                                        @endif
                                         >{{ $assignment->alias }}:{{ $assignment->port }}</option>
                                     @endforeach
                                 </select>
@@ -152,7 +160,7 @@
                                 <div>
                                     <select name="add_allocations[]" class="form-control" multiple id="pAddAllocations">
                                         @foreach ($unassigned as $assignment)
-                                            <option value="{{ $assignment->id }}">{{ $assignment->alias }}:{{ $assignment->port }}</option>
+                                        <option value="{{ $assignment->id }}">{{ $assignment->alias }}:{{ $assignment->port }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -163,7 +171,7 @@
                                 <div>
                                     <select name="remove_allocations[]" class="form-control" multiple id="pRemoveAllocations">
                                         @foreach ($assigned as $assignment)
-                                            <option value="{{ $assignment->id }}">{{ $assignment->alias }}:{{ $assignment->port }}</option>
+                                        <option value="{{ $assignment->id }}">{{ $assignment->alias }}:{{ $assignment->port }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -183,10 +191,10 @@
 @endsection
 
 @section('footer-scripts')
-    @parent
-    <script>
+@parent
+<script>
     $('#pAddAllocations').select2();
     $('#pRemoveAllocations').select2();
     $('#pAllocation').select2();
-    </script>
+</script>
 @endsection
